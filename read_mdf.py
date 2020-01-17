@@ -1,10 +1,24 @@
 from asammdf import MDF
+from pyqtgraph import plot
 
-mdf_file = "./2018-07-01_15-58-05Ehingen.mf4"
-dbc_file = "./BCU.dbc"
+mdf_path = "./2018-07-01_15-58-05Ehingen.mf4"
+dbc_path = ["./Vehicle_CAN.dbc"]
 
-mdf = MDF(mdf_file)
-mdf_scaled = mdf.extract_can_logging(dbc_file, ignore_invalid_signals=True)
-pd = mdf_scaled.to_dataframe(time_as_date=True)
+mdf_file = MDF(mdf_path)
+mdf_extracted = mdf_file.extract_can_logging(dbc_path)
 
-print(pd)
+for sig in mdf_extracted.iter_channels():
+
+    print("Signal: {} in Unit: {}".format(sig.name, sig.unit))
+#     print("Samples: {}".format(sig.samples))
+#     print("Timestamps: {}".format(sig.timestamps))
+
+#mdf_extracted.get('Giga_Sweep_Mode').plot()
+
+#dist = mdf_extracted.get('Driven_Distance_m')
+
+# print("Signal: {} in Unit: {}".format(dist.name, dist.unit))
+# print("Samples: {}".format(dist.samples))
+# print("Timestamps: {}".format(dist.timestamps))
+
+#plot(dist)
