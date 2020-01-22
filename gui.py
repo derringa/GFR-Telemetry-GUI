@@ -57,6 +57,7 @@ class main(QtWidgets.QMainWindow):
 
         self.channel_list = []
         self.mdf_list = []
+        self.play_status = False
 
         # Apply startup characteristics for window
         self.setWindowTitle("GFR Telemtry Data")
@@ -115,40 +116,63 @@ class main(QtWidgets.QMainWindow):
 
 
     def place_widgets(self):
+
+        ################################### Format Main Window ####################################
+
         # Create horizontal format for main widget subsections
         self.horizontalSections = QtWidgets.QHBoxLayout()
         self.centralWidget.setLayout(self.horizontalSections)
         
+        ################################ Main Window - Left Column ################################
+
         # Left subsection - Virtical Stacking Layout
         self.left_vert_sec = QtWidgets.QVBoxLayout()
         self.horizontalSections.addLayout(self.left_vert_sec)
 
         # Button - "Load dbc file"
         self.upload_dbc_file = QtWidgets.QPushButton("Load DBC File")
-        self.upload_dbc_file.clicked.connect(self.get_dbc_file) # On click call member function get_dbc_file
+        self.upload_dbc_file.clicked.connect(self.load_dbc_file) # On click call member function load_dbc_file
         self.left_vert_sec.addWidget(self.upload_dbc_file)
 
-        # Button - "Load mf4 file"
-        self.upload_mf4_file = QtWidgets.QPushButton("Load MF4 File")
-        self.upload_mf4_file.setEnabled(False)
-        self.upload_mf4_file.clicked.connect(self.get_mf4_file) # On click call member function get_mf4_file
-        self.left_vert_sec.addWidget(self.upload_mf4_file)
+        # Button - "Load MDF file"
+        self.upload_mdf_file = QtWidgets.QPushButton("Load MDF File")
+        self.upload_mdf_file.setEnabled(False)
+        self.upload_mdf_file.clicked.connect(self.load_mdf_file) # On click call member function load_mdf_file
+        self.left_vert_sec.addWidget(self.upload_mdf_file)
 
         #Channels - Checkbox list
         self.channel_selectors = QtWidgets.QListWidget()
         self.channel_selectors.setFixedWidth(300)
-        self.channel_selectors.itemChanged.connect(self.manage_channels)
+        self.channel_selectors.itemChanged.connect(self.check_event)
         self.left_vert_sec.addWidget(self.channel_selectors)
 
         # Button - "Plot channels"
         self.plot_channels = QtWidgets.QPushButton("Plot Channels")
         self.plot_channels.setEnabled(False)
-        self.plot_channels.clicked.connect(self.load_plots) # On click call member function load_plots
+        self.plot_channels.clicked.connect(self.post_load_plots) # On click call member function load_plots
         self.left_vert_sec.addWidget(self.plot_channels)
+
+        ############################### Main Window - Middle Column ###############################
 
         # Middle subsection - Tabbed graphic data
         self.tabs = QtWidgets.QTabWidget()
         self.horizontalSections.addWidget(self.tabs)
+
+        ############################### Main Window - Right Column ################################
+
+        # Right subsection - Virtical Stacking Layout
+        self.right_vert_sec = QtWidgets.QVBoxLayout()
+        self.horizontalSections.addLayout(self.right_vert_sec)
+
+        # Horizontal Buttons layout - Back-skip, play, pause, forward-skip
+        self.play_horz_sec = QtWidgets.QVBoxLayout()
+        self.right_vert_sec.addLayout(self.play_horz_sec)
+
+        # Button - "Play"
+        self.play_button = QtWidgets.QPushButton()
+        self.play_button.setIcon(QtGui.QIcon("./images/play-button.png"))
+        self.play_button.clicked.connect(self.play_pause_toggle) # On click call member function load_plots
+        self.play_horz_sec.addWidget(self.play_button)
 
 
     def close_application(self):
@@ -156,7 +180,7 @@ class main(QtWidgets.QMainWindow):
         sys.exit()
 
 
-    def get_mf4_file(self):
+    def load_mdf_file(self):
         # Get user selected MDF file path and generate an mdf object using asammdf library.
         mf4_path = QtWidgets.QFileDialog.getOpenFileName(self, 'Select file', 'c:\\', "MDF (*.mf4)") # get file path.
         mdf_file = MDF(mf4_path[0])  # generate mdf object using path string.
@@ -178,7 +202,7 @@ class main(QtWidgets.QMainWindow):
         self.plot_channels.setEnabled(True)
 
 
-    def get_dbc_file(self):
+    def load_dbc_file(self):
         # Get user slected DBC file path.
         self.dbc_path = QtWidgets.QFileDialog.getOpenFileName(self, 'Select file', 'c:\\', "DBC (*.dbc)")
 
@@ -194,10 +218,10 @@ class main(QtWidgets.QMainWindow):
                     self.channel_selectors.addItem(item)
 
         # Activate the Load MF4 File button only after DBC file is loaded and operated on.
-        self.upload_mf4_file.setEnabled(True)
+        self.upload_mdf_file.setEnabled(True)
     
 
-    def manage_channels(self, item):
+    def check_event(self, item):
         # If changed checkbox is unchecked then remove from the desired channels list but if checked then add to list.
         if item.checkState() == False:
             self.channel_list[:] = [ch for ch in self.channel_list if ch != item.text()]
@@ -206,7 +230,7 @@ class main(QtWidgets.QMainWindow):
 
 
 
-    def load_plots(self):
+    def post_load_plots(self):
         curr_tabs = [] # Temporary list of tabs already displayed to avoid reproducing on refresh.
 
         # Iterate through tabs and if no longer on desired channel list them remove them else add to current tabs list.
@@ -222,7 +246,15 @@ class main(QtWidgets.QMainWindow):
             if ch not in curr_tabs:
                 obj_data = self.mdf_extracted.get(ch) # Get channel by specific name.
                 new_tab = Tab(ch, obj_data.timestamps, obj_data.samples) # Generate tab object using mdf channel name and time and data values.
-                self.tabs.addTab(new_tab.tab, new_tab.title) # Add tab to widget.
+                self.tabs.addTab(new_tab.get_tab_widget(), new_tab.get_title()) # Add tab to widget.
+
+    def play_pause_toggle(self):
+        if self.play_status == False:
+            self.play_button.setIcon(QtGui.QIcon("./images/pause-symbol.png"))
+            self.play_status = True
+        else:
+            self.play_button.setIcon(QtGui.QIcon("./images/play-button.png"))
+            self.play_status = False
 
 
 if __name__ == "__main__":
