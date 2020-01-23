@@ -1,17 +1,18 @@
 # GFR Telemetry GUI Changelog #
 ## Unfinished/Dysfunctional ##
-## Next tasks ##
 * Add click handlers to play and track buttons.
-* Confirm with team what channels are needed to get steering wheel, accelerator and brake compression.
-* Find graphics for steering wheel to apply to main window.
 * Improve checklist to show channel group name associated with each channel.
+  * In DBC the last string for each line beginning with BO_ is a channel group name
+## Next tasks ##
+* Confirm with team what channels are needed to get steering wheel (STA), accel (APPS1/APPS2) and brake (BrkPres_Front).
+* Find graphics for steering wheel to apply to main window.
 * Provide User graph display options.
 * Option to save and load current display preferences.
 
 ## Design Questions ##
 * Do we want to display yaw, roll, pitch, acceleration in x/y/z etc. visually?
-* Develope a track view. Do we need GPS for this? Can we extrapolate from other data?
-* If tack can be displayed, how are we designating a starting location and determining lap time?
+* Develope a track view. Do we need GPS for this? Can we extrapolate from other data? (AHRS channels)
+* If track can be displayed, how are we designating a starting location and determining lap time?
 
 ## 11/21/2019 ##
 * First design on main window layout.
