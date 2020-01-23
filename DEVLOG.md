@@ -1,5 +1,5 @@
 # GFR Telemetry GUI Changelog #
-## Unfinished ##
+## Unfinished/Dysfunctional ##
 ## Next tasks ##
 * Add click handlers to play and track buttons.
 * Confirm with team what channels are needed to get steering wheel, accelerator and brake compression.
