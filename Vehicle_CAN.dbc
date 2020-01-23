@@ -1,0 +1,840 @@
+VERSION ""
+
+
+NS_ : 
+	NS_DESC_
+	CM_
+	BA_DEF_
+	BA_
+	VAL_
+	CAT_DEF_
+	CAT_
+	FILTER
+	BA_DEF_DEF_
+	EV_DATA_
+	ENVVAR_DATA_
+	SGTYPE_
+	SGTYPE_VAL_
+	BA_DEF_SGTYPE_
+	BA_SGTYPE_
+	SIG_TYPE_REF_
+	VAL_TABLE_
+	SIG_GROUP_
+	SIG_VALTYPE_
+	SIGTYPE_VALTYPE_
+	BO_TX_BU_
+	BA_DEF_REL_
+	BA_REL_
+	BA_DEF_DEF_REL_
+	BU_SG_REL_
+	BU_EV_REL_
+	BU_BO_REL_
+	SG_MUL_VAL_
+
+BS_:
+
+BU_: BSC Logger CSI_5_DASH Beacon AHRS PDM BCU STW Gigabox ADL CSI_3_REAR_Right CSI_4_REAR_Left CSI_2_Front_Middle CSI_0_Front_Left CSI_1_Front_Right
+VAL_TABLE_ PDM_flags 4 "GIGABOX OFFLINE" 3 "WATERPUMP DERATING" 2 "OVERLOAD DETECTED" 1 "FAN DERATING" 0 "Normal Operation" ;
+VAL_TABLE_ Status 1 "ok" 0 "error" ;
+VAL_TABLE_ Channel_Status 2 "OVERLOAD" 1 "ON" 0 "OFF" ;
+VAL_TABLE_ Status_Continental 4369 "Reserved" 4368 "Signal faulty" 4353 "Sensor does not exist" 4113 "Reserved" 4097 "Sensor does not exist" 4096 "Signal within range" 273 "Reserved" 257 "Sensor does not exist" 256 "Signal within range" 17 "Reserved" 1 "Sensor does not exist" 0 "Signal within range" 4352 "Signal within range" 4112 "Signal faulty" 272 "Signal faulty" 16 "Signal faulty" ;
+VAL_TABLE_ AnAus 1 "1" 0 "0" ;
+VAL_TABLE_ Mount_Position 7 "rotated +270 z reflection xy" 6 "rotated +180 z reflection xy" 5 "rotated +90 zreflection xy" 4 "Standard reflection xy" 3 "rotated +270 z" 2 "rotated +180 z" 1 "rotated +90 z" 0 "Standard" ;
+VAL_TABLE_ Format_CAN_Signals 1 "Motorola Format" 0 "Intel Format" ;
+
+
+BO_ 3221225472 VECTOR__INDEPENDENT_SIG_MSG: 0 Vector__XXX
+ SG_ PDM_Ch_Logger_state : 0|1@1- (1,0) [0|0] "" Vector__XXX
+ SG_ PDM_Ch_MC_state : 0|1@1- (1,0) [0|0] "" Vector__XXX
+ SG_ PDM_Ch_SC_Supply_state : 0|1@1- (1,0) [0|0] "" Vector__XXX
+ SG_ PDM_Ch_GB_KL30_state : 0|1@1- (1,0) [0|0] "" Vector__XXX
+ SG_ PDM_Ch_GB_KL15_state : 0|1@1- (1,0) [0|0] "" Vector__XXX
+ SG_ PDM_Ch_Dash_state : 0|1@1- (1,0) [0|0] "" Vector__XXX
+ SG_ PDM_Ch_Waterpump_2_state : 0|1@1- (1,0) [0|0] "" Vector__XXX
+ SG_ PDM_Ch_Waterpump_1_state : 0|1@1- (1,0) [0|0] "" Vector__XXX
+ SG_ PDM_Ch_CSI_rear_state : 0|1@1- (1,0) [0|0] "" Vector__XXX
+ SG_ PDM_Ch_Brakelight_state : 0|1@1- (1,0) [0|0] "" Vector__XXX
+ SG_ PDM_Ch_Diag_AHRS_state : 0|1@1- (1,0) [0|0] "" Vector__XXX
+ SG_ PDM_Ch_Sound_state : 0|1@1- (1,0) [0|0] "" Vector__XXX
+ SG_ PDM_Ch_Fan_6_state : 0|1@1- (1,0) [0|0] "" Vector__XXX
+ SG_ PDM_Ch_Fan_5_state : 0|1@1- (1,0) [0|0] "" Vector__XXX
+ SG_ PDM_Ch_Fan_4_state : 0|1@1- (1,0) [0|0] "" Vector__XXX
+ SG_ PDM_Ch_Fan_3_state : 0|1@1- (1,0) [0|0] "" Vector__XXX
+ SG_ PDM_Ch_Fan_2_state : 0|1@1- (1,0) [0|0] "" Vector__XXX
+ SG_ PDM_Ch_Fan_1_state : 0|1@1- (1,0) [0|0] "" Vector__XXX
+ SG_ Beacon_MUX_L8 : 0|8@0+ (1,0) [0|0] "" Vector__XXX
+ SG_ BR2_Valid_Receptions : 0|8@0+ (1,0) [0|0] "" Vector__XXX
+ SG_ BR2_Detector_Peak : 0|8@0+ (0.01,0) [0|0] "V" Vector__XXX
+ SG_ BR2_Detection_Tim : 0|8@0+ (0.001,0) [0|0] "s" Vector__XXX
+ SG_ BR2_Beacon_Time : 0|16@0+ (0.001,0) [0|0] "s" Vector__XXX
+ SG_ BR2_Beacon_Number : 0|16@0+ (1,0) [0|0] "" Vector__XXX
+ SG_ BR2_Beacon_Count : 0|8@0+ (1,0) [0|0] "" Vector__XXX
+ SG_ Beacon_MUX_L16 : 0|16@0+ (1,0) [0|0] "" Vector__XXX
+ SG_ Beacon : 0|16@0+ (1,0) [0|0] "" Vector__XXX
+
+BO_ 1793 BSC_PrechargeReq: 8 BSC
+ SG_ BSC_PrechageReq : 0|1@1+ (1,0) [0|0] "" Vector__XXX
+
+BO_ 322 PDM_ASSI: 8 PDM
+ SG_ PDM_ASSI_STATE : 0|8@1- (1,0) [0|0] "" Vector__XXX
+
+BO_ 1540 CSI0_IMD_LED_Control: 8 BCU
+ SG_ IMD_LED : 0|1@1+ (1,0) [0|0] "" Vector__XXX
+
+BO_ 255 PDM_INIT: 8 PDM
+
+BO_ 1619 CSI5_UnusedDigitalPin: 8 CSI_5_DASH
+ SG_ WheelSpeed_RR : 0|32@1- (0.001,0) [0|0] "m/s" Vector__XXX
+
+BO_ 1618 CSI5_Poti2_PreChargeButton: 8 CSI_5_DASH
+ SG_ Poti_2_voltage : 0|32@1- (1,0) [-2147483648|2147483647] "" Vector__XXX
+ SG_ PreChargeButton : 32|32@1+ (1,0) [0|4294967295] ""  Gigabox
+
+BO_ 1617 CSI5_Button_poti: 8 CSI_5_DASH
+ SG_ Button : 0|32@1+ (1,0) [0|4294967295] "" Vector__XXX
+ SG_ Poti_1_voltage : 32|32@1- (1,0) [-2147483648|2147483647] ""  Logger,Gigabox
+
+BO_ 1616 CSI5_Status: 8 CSI_5_DASH
+ SG_ DIG_Speed_Ticks_per_Rotation m4 : 16|8@1+ (1,0) [0|0] ""  Logger
+ SG_ DIG_Speed_Radius_mm m4 : 32|16@1+ (1,0) [0|0] ""  Logger
+ SG_ Con_Mode_DIG_Sens m4 : 8|2@1+ (1,0) [0|0] ""  Logger
+ SG_ Con_Mode_ANA_Sens4 m3 : 8|2@1+ (1,0) [0|0] ""  Logger
+ SG_ Con_Mode_ANA_Sens3 m2 : 8|2@1+ (1,0) [0|0] ""  Logger
+ SG_ Con_Mode_ANA_Sens2 m1 : 8|2@1+ (1,0) [0|0] ""  Logger
+ SG_ Con_Mode_ANA_Sens1 m0 : 8|2@1+ (1,0) [0|0] ""  Logger
+ SG_ Con_DIG_Sens m4 : 12|1@1+ (1,0) [0|0] ""  Logger
+ SG_ Con_ANA_Sens4 m3 : 12|1@1+ (1,0) [0|0] ""  Logger
+ SG_ Con_ANA_Sens3 m2 : 12|1@1+ (1,0) [0|0] ""  Logger
+ SG_ Con_ANA_Sens2 m1 : 12|1@1+ (1,0) [0|0] ""  Logger
+ SG_ Con_ANA_Sens1 m0 : 12|1@1+ (1,0) [0|0] ""  Logger
+ SG_ ANA_Sens4_Offset m3 : 16|16@1- (1,0) [0|0] ""  Logger
+ SG_ ANA_Sens4_Faktor m3 : 32|16@1- (1,0) [0|0] ""  Logger
+ SG_ ANA_Sens3_Offset m2 : 16|16@1- (1,0) [0|0] ""  Logger
+ SG_ ANA_Sens3_Faktor m2 : 32|16@1- (1,0) [0|0] ""  Logger
+ SG_ ANA_Sens2_Offset m1 : 16|16@1- (1,0) [0|0] ""  Logger
+ SG_ ANA_Sens2_Faktor m1 : 32|16@1- (1,0) [0|0] ""  Logger
+ SG_ ANA_Sens1_Offset m0 : 16|16@1- (1,0) [0|0] ""  Logger
+ SG_ ANA_Sens1_Faktor m0 : 32|16@1- (1,0) [0|0] ""  Logger
+ SG_ Sens_Mux M : 0|4@1+ (1,0) [0|0] ""  Logger
+
+BO_ 1624 CSI5_CurrentVoltage: 8 CSI_5_DASH
+ SG_ Sens_Mux : 0|4@1+ (1,0) [0|0] ""  Logger
+ SG_ CurrentVoltage : 16|16@1+ (0.002,0) [0|0] "V"  Logger
+
+BO_ 1622 CSI5_Error_message: 8 CSI_5_DASH
+
+BO_ 1283 GB_MC_Error_Counter: 3 Gigabox
+ SG_ ErrorCounterRR_reset : 16|1@1- (1,2) [0|1] ""  Logger
+ SG_ ErrorCounterRL_held : 8|1@1- (1,1) [0|1] ""  Logger
+ SG_ ErrorCounterRL_reset : 0|1@1- (1,0) [0|1] ""  Logger
+
+BO_ 1606 CSI4_Error_message: 8 CSI_4_REAR_Left
+
+BO_ 569 GB_Utilities: 8 Gigabox
+ SG_ AHRS_yawt : 39|32@0- (1,0) [-3.4E+038|3.4E+038] "Degrees"  Logger
+ SG_ Giga_Debug_2 : 24|8@1- (1,0) [0|0] ""  Logger
+ SG_ Giga_Debug_1 : 16|8@1- (1,0) [0|0] ""  Logger
+ SG_ Giga_Sweep_Mode : 8|8@1+ (1,0) [0|0] ""  Logger
+ SG_ Giga_Sweep_Factor : 0|8@1- (1,0) [0|0] ""  Logger
+
+BO_ 855 AHRS_Init_Debug: 8 AHRS
+
+BO_ 854 AHRS_Samplerate: 8 AHRS
+ SG_ AHRS_samplerate : 7|32@0- (1,0) [-3.4E+038|3.4E+038] "Hertz"  Logger,ADL,Gigabox
+
+BO_ 853 AHRS_Gyro_Y_Gyro_Z: 8 AHRS
+ SG_ AHRS_gyroz : 39|32@0- (1,0) [-3.4E+038|3.4E+038] "rad/Sample"  Logger,ADL,Gigabox
+ SG_ AHRS_gyroy : 7|32@0- (1,0) [-3.4E+038|3.4E+038] "rad/Sample"  Logger,ADL,Gigabox
+
+BO_ 852 AHRS_Accel_Z_Gyro_X: 8 AHRS
+ SG_ AHRS_gyrox : 39|32@0- (1,0) [-3.4E+038|3.4E+038] "rad/Sample"  Logger,ADL,Gigabox
+ SG_ AHRS_accelz : 7|32@0- (1,0) [-3.4E+038|3.4E+038] "mG"  Logger,ADL,Gigabox
+
+BO_ 851 AHRS_Accel_X_Accel_Y: 8 AHRS
+ SG_ AHRS_accely : 39|32@0- (1,0) [-3.4E+038|3.4E+038] "mG"  Logger,ADL,Gigabox
+ SG_ AHRS_accelx : 7|32@0- (1,0) [-3.4E+038|3.4E+038] "mG"  Logger,ADL,Gigabox
+
+BO_ 850 AHRS_Magp_Y_Magp_Z: 8 AHRS
+ SG_ AHRS_magpz : 39|32@0- (1,0) [-3.4E+038|3.4E+038] "mGauss"  Logger,ADL,Gigabox
+ SG_ AHRS_magpy : 7|32@0- (1,0) [-3.4E+038|3.4E+038] "mGauss"  Logger,ADL,Gigabox
+
+BO_ 849 AHRS_Yawt_Magp_X: 8 AHRS
+ SG_ AHRS_magpx : 39|32@0- (1,0) [-3.4E+038|3.4E+038] "mGauss"  Logger,ADL,Gigabox
+ SG_ AHRS_yawt : 7|32@0- (1,0) [-3.4E+038|3.4E+038] "Degrees"  Logger,ADL,Gigabox
+
+BO_ 848 AHRS_Pitch_Roll: 8 AHRS
+ SG_ AHRS_roll : 39|32@0- (1,0) [-3.4E+038|3.4E+038] "Degrees"  Logger,ADL,Gigabox
+ SG_ AHRS_pitch : 7|32@0- (1,0) [-3.4E+038|3.4E+038] "Degrees"  Logger,ADL,Gigabox
+
+BO_ 1590 CSI3_Error_message: 0 CSI_3_REAR_Right
+
+BO_ 1574 CSI2_Error_message: 0 CSI_2_Front_Middle
+
+BO_ 1572 CSI2_BMS_LED_Control: 8 BCU
+ SG_ BMS_LED : 0|1@1+ (1,0) [0|1] "" Vector__XXX
+
+BO_ 1542 CSI0_Error_message: 8 CSI_0_Front_Left
+
+BO_ 1620 CSI5_Precharge_LED_Control: 8 CSI_5_DASH
+ SG_ Precharge_LED : 0|1@1+ (1,0) [0|0] ""  Logger,CSI_5_DASH
+
+BO_ 1558 CSI1_Error_message: 0 CSI_1_Front_Right
+
+BO_ 247 ADL_Set_Min_Max: 6 ADL
+ SG_ Value_Min_Allowed_Voltage : 16|16@1+ (0.0001,0) [0|0] "V"  Logger,BCU
+ SG_ Value_Max_Allowed_Voltage : 0|16@1+ (0.0001,0) [0|0] "V"  Logger,BCU
+ SG_ Value_Max_Allowed_Temperature : 32|16@1- (0.01,0) [0|0] "C"  Logger,BCU
+
+BO_ 166 BCU_Bat_Max_Values: 8 BCU
+ SG_ Max_Voltage : 0|16@1+ (0.0001,0) [0|6.5535] "V"  Logger
+ SG_ Max_Temp : 32|16@1- (0.01,0) [0|0] "°C"  Logger
+ SG_ Min_Voltage : 16|16@1+ (0.0001,0) [0|6.5535] ""  Logger
+
+BO_ 167 BCU_AIR_Stuck: 4 BCU
+ SG_ AIR_Stuck_Plus : 0|16@1- (1,0) [0|0] ""  Logger,ADL
+ SG_ AIR_Stuck_Minus : 16|16@1- (1,0) [0|0] ""  Logger,ADL
+
+BO_ 165 BCU_Status: 8 BCU
+ SG_ TLE_no_fault : 40|1@1+ (1,0) [0|0] ""  Logger
+ SG_ TLE_Diag_PRE : 36|2@1+ (1,0) [0|0] ""  Logger
+ SG_ TLE_Diag_DIS : 38|2@1+ (1,0) [0|0] ""  Logger
+ SG_ TLE_Diag_AIR_p : 32|2@1+ (1,0) [0|0] ""  Logger
+ SG_ TLE_Diag_AIR_m : 34|2@1+ (1,0) [0|0] ""  Logger
+ SG_ TEMP_MON_BCU_BOARD : 48|16@1- (0.0125,0) [0|0] "°C"  Logger
+ SG_ Air_Trigger : 16|16@1- (1,0) [0|0] ""  Logger
+ SG_ Air_Status : 0|16@1- (1,0) [0|0] ""  Logger
+
+BO_ 254 GB_BMS_PrechargeRequest_TX: 8 Gigabox
+ SG_ HVState_WaitState : 2|1@1+ (1,0) [0|0] ""  Logger,BCU
+ SG_ HVState_RTDState : 3|1@1+ (1,0) [0|0] ""  Logger,BCU
+ SG_ HVState_ErrorState : 1|1@1+ (1,0) [0|0] ""  Logger,BCU
+ SG_ HVState_ActiveState : 0|1@1+ (1,0) [0|0] ""  Logger,BCU
+
+BO_ 163 BCU_Extrem_Temperature: 8 BCU
+ SG_ CellID_Min_Temp : 24|8@1+ (1,0) [0|0] ""  Logger
+ SG_ CellID_Max_Temp : 16|8@1+ (1,0) [0|0] ""  Logger
+ SG_ Min_Temp : 48|16@1- (0.01,0) [0|0] "°C"  Logger
+ SG_ Calendar_Year : 8|8@1+ (1,0) [0|0] ""  Logger
+ SG_ Max_Temp : 32|16@1- (0.01,0) [0|0] "°C"  Logger
+ SG_ Stack_ID : 0|8@1+ (1,0) [0|0] ""  Logger
+
+BO_ 162 BCU_Extrem_Voltages: 8 BCU
+ SG_ Stack_ID : 0|8@1+ (1,0) [0|0] ""  Logger
+ SG_ CellID_Min_Vol : 24|8@1+ (1,0) [0|0] ""  Logger
+ SG_ Calendar_Year : 8|8@1+ (1,0) [0|0] ""  Logger
+ SG_ Min_Voltage : 48|16@1+ (0.0001,0) [0|6.5535] ""  Logger
+ SG_ Max_Voltage : 32|16@1+ (0.0001,0) [0|6.5535] "V"  Logger
+ SG_ CellID_Max_Vol : 16|8@1+ (1,0) [0|0] ""  Logger
+
+BO_ 567 GB_WheelLockControl_TX: 8 Gigabox
+ SG_ Giga_WLC_Slip_Aim_0_100 m2 : 8|10@1- (0.1,0) [0|0] "%"  Logger
+ SG_ WLC_Active m0 : 58|1@1+ (1,0) [0|1] ""  Logger,ADL
+ SG_ WLC_Multiplexer M : 0|4@1+ (1,0) [0|15] ""  Logger,ADL
+ SG_ WL_Trq_RR_Nm m1 : 8|10@1- (0.1,0) [-51.2|51.1] "Nm"  Logger,ADL
+ SG_ WLC_Trq_RL_Nm m0 : 8|10@1- (0.1,0) [-51.2|51.1] "Nm"  Logger,ADL
+ SG_ WLC_RR_PID_P_Out m1 : 18|10@1- (0.1,0) [-51.2|51.1] "Nm"  Logger,ADL
+ SG_ WLC_RR_PID_I_Out m1 : 28|10@1- (0.1,0) [-51.2|51.1] "Nm"  Logger,ADL
+ SG_ WLC_RR_PID_D_Out m1 : 38|10@1- (0.1,0) [-51.2|51.1] "Nm"  Logger,ADL
+ SG_ WLC_RR_Max_Trq_Nm m1 : 48|10@1- (0.1,0) [-51.2|51.1] "Nm"  Logger,ADL
+ SG_ WLC_RL_PID_P_Out m0 : 18|10@1- (0.1,0) [-51.2|51.1] "Nm"  Logger,ADL
+ SG_ WLC_RL_PID_I_Out m0 : 28|10@1- (0.1,0) [-51.2|51.1] "Nm"  Logger,ADL
+ SG_ WLC_RL_PID_D_Out m0 : 38|10@1- (0.1,0) [-51.2|51.1] "Nm"  Logger,ADL
+ SG_ WLC_RL_Max_Trq_Nm m0 : 48|10@1- (0.1,0) [-51.2|51.1] "Nm"  Logger,ADL
+
+BO_ 1282 GB_MC_State: 8 Gigabox
+ SG_ Multiplexer_4Bit M : 0|4@1+ (1,0) [0|0] ""  Logger
+ SG_ DMC_RL_SensorWarning m0 : 13|1@1+ (1,0) [0|0] ""  Logger,ADL
+ SG_ DMC_RL_SlewrateLim m0 : 12|1@1+ (1,0) [0|0] ""  Logger,ADL
+ SG_ DMC_RL_TempMotorLim m0 : 10|1@1+ (1,0) [0|0] ""  Logger,ADL
+ SG_ DMC_RL_TempDmcLim m0 : 19|1@1+ (1,0) [0|0] ""  Logger,ADL
+ SG_ DMC_RL_Running m0 : 9|1@1+ (1,0) [0|0] ""  Logger,ADL
+ SG_ DMC_RL_Ready m0 : 8|1@1+ (1,0) [0|0] ""  Logger,ADL
+ SG_ DMC_RL_ModelLim m0 : 23|1@1+ (1,0) [0|0] ""  Logger,ADL
+ SG_ DMC_RL_PowLim m0 : 22|1@1+ (1,0) [0|0] ""  Logger,ADL
+ SG_ DMC_RL_TrqLim m0 : 21|1@1+ (1,0) [0|0] ""  Logger,ADL
+ SG_ DMC_RL_VLim m0 : 17|1@1+ (1,0) [0|0] ""  Logger,ADL
+ SG_ DMC_RL_SpdLim m0 : 18|1@1+ (1,0) [0|0] ""  Logger,ADL
+ SG_ DMC_RL_IacLim m0 : 20|1@1+ (1,0) [0|0] ""  Logger,ADL
+ SG_ DMC_RL_TrqLimitation m0 : 15|1@1+ (1,0) [0|0] ""  Logger,ADL
+ SG_ DMC_RL_GenErr m0 : 14|1@1+ (1,0) [0|0] ""  Logger,ADL
+ SG_ DMC_RL_CLim m0 : 16|1@1+ (1,0) [0|0] ""  Logger,ADL
+ SG_ DMC_RR_SensorWarning m0 : 29|1@1+ (1,0) [0|0] ""  Logger,ADL
+ SG_ DMC_RR_SlewrateLim m0 : 28|1@1+ (1,0) [0|0] ""  Logger,ADL
+ SG_ DMC_RR_TempMotorLim m0 : 26|1@1+ (1,0) [0|0] ""  Logger,ADL
+ SG_ DMC_RR_TempDmcLim m0 : 35|1@1+ (1,0) [0|0] ""  Logger,ADL
+ SG_ DMC_RR_Running m0 : 25|1@1+ (1,0) [0|0] ""  Logger,ADL
+ SG_ DMC_RR_Ready m0 : 24|1@1+ (1,0) [0|0] ""  Logger,ADL
+ SG_ DMC_RR_ModelLim m0 : 39|1@1+ (1,0) [0|0] ""  Logger,ADL
+ SG_ DMC_RR_PowLim m0 : 38|1@1+ (1,0) [0|0] ""  Logger,ADL
+ SG_ DMC_RR_TrqLim m0 : 37|1@1+ (1,0) [0|0] ""  Logger,ADL
+ SG_ DMC_RR_VLim m0 : 33|1@1+ (1,0) [0|0] ""  Logger,ADL
+ SG_ DMC_RR_SpdLim m0 : 34|1@1+ (1,0) [0|0] ""  Logger,ADL
+ SG_ DMC_RR_IacLim m0 : 36|1@1+ (1,0) [0|0] ""  Logger,ADL
+ SG_ DMC_RR_TrqLimitation m0 : 31|1@1+ (1,0) [0|0] ""  Logger,ADL
+ SG_ DMC_RR_GenErr m0 : 30|1@1+ (1,0) [0|0] ""  Logger,ADL
+ SG_ DMC_RR_CLim m0 : 32|1@1+ (1,0) [0|0] ""  Logger,ADL
+ SG_ DMC_RL_I_OscLim_Active m1 : 52|1@1+ (1,0) [0|0] ""  Logger,ADL
+ SG_ DMC_RL_W_DriverSD m1 : 45|1@1+ (1,0) [0|0] ""  Logger,ADL
+ SG_ DMC_RL_E_DriverSD m1 : 33|1@1+ (1,0) [0|0] ""  Logger,ADL
+ SG_ DMC_RL_I_ExtAw2 m1 : 54|1@1+ (1,0) [0|0] ""  Logger,ADL
+ SG_ DMC_RL_I_ExtAw1 m1 : 53|1@1+ (1,0) [0|0] ""  Logger,ADL
+ SG_ DMC_RL_I_SystemCheck m1 : 55|1@1+ (1,0) [0|0] ""  Logger,ADL
+ SG_ DMC_RL_E_PowerMismatch m1 : 32|1@1+ (1,0) [0|0] ""  Logger,ADL
+ SG_ DMC_RL_W_PowerMismatch m1 : 44|1@1+ (1,0) [0|0] ""  Logger,ADL
+ SG_ DMC_RL_W_ModMaxLim m1 : 41|1@1+ (1,0) [0|0] ""  Logger,ADL
+ SG_ DMC_RL_E_CanComStartup m1 : 27|1@1+ (1,0) [0|0] ""  Logger,ADL
+ SG_ DMC_RL_W_SpeedSensor m1 : 43|1@1+ (1,0) [0|0] ""  Logger,ADL
+ SG_ DMC_RL_W_HvUndervoltage m1 : 42|1@1+ (1,0) [0|0] ""  Logger,ADL
+ SG_ DMC_RL_W_TempSensor m1 : 40|1@1+ (1,0) [0|0] ""  Logger,ADL
+ SG_ DMC_RL_E_Storage m1 : 29|1@1+ (1,0) [0|0] ""  Logger,ADL
+ SG_ DMC_RL_E_KL15Lost m1 : 28|1@1+ (1,0) [0|0] ""  Logger,ADL
+ SG_ DMC_RL_E_AN_IN m1 : 39|1@1+ (1,0) [0|0] ""  Logger,ADL
+ SG_ DMC_RL_E_IntSupply m1 : 26|1@1+ (1,0) [0|0] ""  Logger,ADL
+ SG_ DMC_RL_E_MotEEPROM m1 : 30|1@1+ (1,0) [0|0] ""  Logger,ADL
+ SG_ DMC_RL_E_AC_Overcurr m1 : 25|1@1+ (1,0) [0|0] ""  Logger,ADL
+ SG_ DMC_RL_E_OS_Trap m1 : 24|1@1+ (1,0) [0|0] ""  Logger,ADL
+ SG_ DMC_RL_E_CanCtrl2MsgLost m1 : 31|1@1+ (1,0) [0|0] ""  Logger,ADL
+ SG_ DMC_RL_E_SpdSensSupply m1 : 23|1@1+ (1,0) [0|0] ""  Logger,ADL
+ SG_ DMC_RL_E_SpeedSensor m1 : 22|1@1+ (1,0) [0|0] ""  Logger,ADL
+ SG_ DMC_RL_E_CanLimMsgInvalid m1 : 21|1@1+ (1,0) [0|0] ""  Logger,ADL
+ SG_ DMC_RL_E_CanCtrlMsgInvalid m1 : 20|1@1+ (1,0) [0|0] ""  Logger,ADL
+ SG_ DMC_RL_E_CanLimMsgLost m1 : 19|1@1+ (1,0) [0|0] ""  Logger,ADL
+ SG_ DMC_RL_E_UV m1 : 11|1@1+ (1,0) [0|0] ""  Logger,ADL
+ SG_ DMC_RL_E_VltMeas m1 : 17|1@1+ (1,0) [0|0] ""  Logger,ADL
+ SG_ DMC_RL_E_OV m1 : 10|1@1+ (1,0) [0|0] ""  Logger,ADL
+ SG_ DMC_RL_E_TempMot m1 : 13|1@1+ (1,0) [0|0] ""  Logger,ADL
+ SG_ DMC_RL_E_TempDmc m1 : 14|1@1+ (1,0) [0|0] ""  Logger,ADL
+ SG_ DMC_RL_E_Speed m1 : 12|1@1+ (1,0) [0|0] ""  Logger,ADL
+ SG_ DMC_RL_E_SkyVlt m1 : 18|1@1+ (1,0) [0|0] ""  Logger,ADL
+ SG_ DMC_RL_E_ShortCircuit m1 : 16|1@1+ (1,0) [0|0] ""  Logger,ADL
+ SG_ DMC_RL_E_Init m1 : 8|1@1+ (1,0) [0|0] ""  Logger,ADL
+ SG_ DMC_RL_E_DcCurr m1 : 9|1@1+ (1,0) [0|0] ""  Logger,ADL
+ SG_ DMC_RL_E_CanCtrlMsgLost m1 : 15|1@1+ (1,0) [0|0] ""  Logger,ADL
+ SG_ DMC_RR_I_OscLim_Active m2 : 52|1@1+ (1,0) [0|0] ""  Logger,ADL
+ SG_ DMC_RR_W_DriverSD m2 : 45|1@1+ (1,0) [0|0] ""  Logger,ADL
+ SG_ DMC_RR_E_DriverSD m2 : 33|1@1+ (1,0) [0|0] ""  Logger,ADL
+ SG_ DMC_RR_I_ExtAw2 m2 : 54|1@1+ (1,0) [0|0] ""  Logger,ADL
+ SG_ DMC_RR_I_ExtAw1 m2 : 53|1@1+ (1,0) [0|0] ""  Logger,ADL
+ SG_ DMC_RR_I_SystemCheck m2 : 55|1@1+ (1,0) [0|0] ""  Logger,ADL
+ SG_ DMC_RR_E_PowerMismatch m2 : 32|1@1+ (1,0) [0|0] ""  Logger,ADL
+ SG_ DMC_RR_W_PowerMismatch m2 : 44|1@1+ (1,0) [0|0] ""  Logger,ADL
+ SG_ DMC_RR_W_ModMaxLim m2 : 41|1@1+ (1,0) [0|0] ""  Logger,ADL
+ SG_ DMC_RR_E_CanComStartup m2 : 27|1@1+ (1,0) [0|0] ""  Logger,ADL
+ SG_ DMC_RR_W_SpeedSensor m2 : 43|1@1+ (1,0) [0|0] ""  Logger,ADL
+ SG_ DMC_RR_W_HvUndervoltage m2 : 42|1@1+ (1,0) [0|0] ""  Logger,ADL
+ SG_ DMC_RR_W_TempSensor m2 : 40|1@1+ (1,0) [0|0] ""  Logger,ADL
+ SG_ DMC_RR_E_Storage m2 : 29|1@1+ (1,0) [0|0] ""  Logger,ADL
+ SG_ DMC_RR_E_KL15Lost m2 : 28|1@1+ (1,0) [0|0] ""  Logger,ADL
+ SG_ DMC_RR_E_AN_IN m2 : 39|1@1+ (1,0) [0|0] ""  Logger,ADL
+ SG_ DMC_RR_E_IntSupply m2 : 26|1@1+ (1,0) [0|0] ""  Logger,ADL
+ SG_ DMC_RR_E_MotEEPROM m2 : 30|1@1+ (1,0) [0|0] ""  Logger,ADL
+ SG_ DMC_RR_E_AC_Overcurr m2 : 25|1@1+ (1,0) [0|0] ""  Logger,ADL
+ SG_ DMC_RR_E_OS_Trap m2 : 24|1@1+ (1,0) [0|0] ""  Logger,ADL
+ SG_ DMC_RR_E_CanCtrl2MsgLost m2 : 31|1@1+ (1,0) [0|0] ""  Logger,ADL
+ SG_ DMC_RR_E_SpdSensSupply m2 : 23|1@1+ (1,0) [0|0] ""  Logger,ADL
+ SG_ DMC_RR_E_SpeedSensor m2 : 22|1@1+ (1,0) [0|0] ""  Logger,ADL
+ SG_ DMC_RR_E_CanLimMsgInvalid m2 : 21|1@1+ (1,0) [0|0] ""  Logger,ADL
+ SG_ DMC_RR_E_CanCtrlMsgInvalid m2 : 20|1@1+ (1,0) [0|0] ""  Logger,ADL
+ SG_ DMC_RR_E_CanLimMsgLost m2 : 19|1@1+ (1,0) [0|0] ""  Logger,ADL
+ SG_ DMC_RR_E_UV m2 : 11|1@1+ (1,0) [0|0] ""  Logger,ADL
+ SG_ DMC_RR_E_VltMeas m2 : 17|1@1+ (1,0) [0|0] ""  Logger,ADL
+ SG_ DMC_RR_E_OV m2 : 10|1@1+ (1,0) [0|0] ""  Logger,ADL
+ SG_ DMC_RR_E_TempMot m2 : 13|1@1+ (1,0) [0|0] ""  Logger,ADL
+ SG_ DMC_RR_E_TempDmc m2 : 14|1@1+ (1,0) [0|0] ""  Logger,ADL
+ SG_ DMC_RR_E_Speed m2 : 12|1@1+ (1,0) [0|0] ""  Logger,ADL
+ SG_ DMC_RR_E_SkyVlt m2 : 18|1@1+ (1,0) [0|0] ""  Logger,ADL
+ SG_ DMC_RR_E_ShortCircuit m2 : 16|1@1+ (1,0) [0|0] ""  Logger,ADL
+ SG_ DMC_RR_E_Init m2 : 8|1@1+ (1,0) [0|0] ""  Logger,ADL
+ SG_ DMC_RR_E_DcCurr m2 : 9|1@1+ (1,0) [0|0] ""  Logger,ADL
+ SG_ DMC_RR_E_CanCtrlMsgLost m2 : 15|1@1+ (1,0) [0|0] ""  Logger,ADL
+
+BO_ 1281 GB_MC_Signal: 8 Gigabox
+ SG_ DMC_RL_DcVltAct m0 : 24|16@1+ (0.1,0) [0|6553.5] "V"  Logger,ADL
+ SG_ DMC_RR_TrqMin m5 : 24|16@1- (0.01,0) [-327.68|327.67] "Nm"  Logger,ADL
+ SG_ DMC_RR_TrqMax m5 : 8|16@1- (0.01,0) [-327.68|327.67] "Nm"  Logger,ADL
+ SG_ DMC_RR_ActiveLimit m5 : 40|8@1+ (1,0) [0|255] ""  Logger,ADL
+ SG_ DMC_RL_TrqMin m4 : 24|16@1- (0.01,0) [-327.68|327.67] "Nm"  Logger,ADL
+ SG_ DMC_RL_TrqMax m4 : 8|16@1- (0.01,0) [-327.68|327.67] "Nm"  Logger,ADL
+ SG_ DMC_RL_ActiveLimit m4 : 40|8@1+ (1,0) [0|255] ""  Logger,ADL
+ SG_ DMC_RR_TempSys m3 : 56|8@1+ (1,-50) [-50|205] "°C"  Logger,ADL
+ SG_ DMC_RR_TempMot m3 : 40|16@1- (0.5,0) [-16384|16383.5] "°C"  Logger,ADL
+ SG_ DMC_RR_TempInv m3 : 24|16@1- (0.5,0) [-16384|16383.5] "°C"  Logger,ADL
+ SG_ DMC_RR_MechPwr m3 : 8|16@1- (16,0) [-524288|524272] "W"  Logger,ADL
+ SG_ DMC_RL_TempSys m2 : 56|8@1+ (1,-50) [-50|205] "°C"  Logger,ADL
+ SG_ DMC_RL_TempMot m2 : 40|16@1- (0.5,0) [-16384|16383.5] "°C"  Logger,ADL
+ SG_ DMC_RL_TempInv m2 : 24|16@1- (0.5,0) [-16384|16383.5] "°C"  Logger,ADL
+ SG_ DMC_RL_MechPwr m2 : 8|16@1- (16,0) [-524288|524272] "W"  Logger,ADL
+ SG_ DMC_RR_TrqAvl m1 : 40|16@1- (0.01,0) [-327.68|327.67] "Nm"  Logger,ADL
+ SG_ DMC_RR_DcVltAct m1 : 24|16@1+ (0.1,0) [0|6553.5] "V"  Logger,ADL
+ SG_ DMC_RR_DcCurrAct m1 : 8|16@1- (0.1,0) [-3276.8|3276.7] "A"  Logger,ADL
+ SG_ DMC_RL_TrqAvl m0 : 40|16@1- (0.01,0) [-327.68|327.67] "Nm"  Logger,ADL
+ SG_ DMC_RL_DcCurrAct m0 : 8|16@1- (0.1,0) [-3276.8|3276.7] "A"  Logger,ADL
+ SG_ Multiplexer_4Bit M : 0|4@1+ (1,0) [0|0] ""  Logger
+
+BO_ 1279 GB_MC_Signal_Trq: 8 Gigabox
+ SG_ DMC_RR_TrqAct m1 : 40|16@1- (0.01,0) [-327.68|327.67] "Nm"  Logger,ADL
+ SG_ Multiplexer_4Bit M : 0|4@1+ (1,0) [0|0] ""  Logger
+ SG_ DMC_RR_SpdAct m1 : 24|16@1- (1,0) [-32768|23767] "rpm"  Logger,ADL
+ SG_ DMC_RR_AcCurrAct m1 : 8|16@1+ (0.25,0) [0|16383.75] "A"  Logger,ADL
+ SG_ DMC_RL_TrqAct m0 : 40|16@1- (0.01,0) [-327.68|327.67] "Nm"  Logger,ADL
+ SG_ DMC_RL_SpdAct m0 : 24|16@1- (1,0) [-32768|23767] "rpm"  Logger,ADL
+ SG_ DMC_RL_AcCurrAct m0 : 8|16@1+ (0.25,0) [0|16383.75] "A"  Logger,ADL
+
+BO_ 164 BCU_Safety_Circuit: 8 BCU
+ SG_ SC_in_Volts : 48|16@1+ (0.001,0) [0|0] "V"  Logger
+ SG_ CSMS_Volts : 16|16@1+ (0.001,0) [0|0] "V"  Logger
+ SG_ TSMS_Volts : 32|16@1+ (0.001,0) [0|0] "V"  Logger
+ SG_ INERTIA : 5|1@1+ (1,0) [0|1] ""  Logger,ADL
+ SG_ pilotline : 7|1@1+ (1,0) [0|1] ""  Logger,ADL
+ SG_ Shutdown : 6|1@1+ (1,0) [0|1] ""  Logger,ADL
+ SG_ BPD_Failure : 1|1@1+ (1,0) [0|1] ""  Logger,ADL
+ SG_ IMD_Failure : 2|1@1+ (1,0) [0|1] ""  Logger,ADL
+ SG_ Interlock_MC : 3|1@1+ (1,0) [0|1] ""  Logger,ADL
+ SG_ Safety_Circuit_open : 0|1@1+ (1,0) [0|1] ""  Logger,ADL
+ SG_ BOTS : 4|1@1+ (1,0) [0|1] ""  Logger,ADL
+ SG_ Zero_Trq_Cmd : 12|4@1+ (1,0) [0|0] ""  Logger,ADL,Gigabox
+
+BO_ 771 STW_PMB_DATA: 8 STW
+ SG_ PMB_UTracPlus_Voltage : 32|16@1- (0.025,0) [-820|820] "V"  Logger,Gigabox
+ SG_ PMB_UTracMinus_Voltage : 48|16@1- (0.025,0) [-820|820] "V"  Logger,Gigabox
+ SG_ PMB_Battery_Voltage : 16|16@1- (0.025,0) [-819.2|819.175] "V"  Logger,Gigabox
+ SG_ PMB_Battery_Current : 0|16@1- (0.025,0) [-819.2|819.175] "A"  Logger,Gigabox
+
+BO_ 568 GB_Driver_Demand_Tx: 8 Gigabox
+ SG_ Driver_Demand_Trq_Nm : 0|10@1- (0.1,0) [0|0] "Nm"  Logger,ADL
+
+BO_ 566 GB_Torque_Vectoring_TX: 8 Gigabox
+ SG_ TV_M1_PilotControl_Out_Nm m18 : 52|10@1- (0.1,0) [0|0] "Nm"  Logger
+ SG_ TV_M1_Trq_YR_PID_Nm m17 : 50|10@1- (0.1,0) [0|0] "Nm"  Logger,ADL
+ SG_ TV_M1_Trq_SA_PID_Nm m16 : 50|10@1- (0.1,0) [0|0] "Nm"  Logger,ADL
+ SG_ TV_M2_YR_PID_P_Out m32 : 20|10@1- (0.1,0) [0|0] "Nm"  Logger,ADL
+ SG_ TV_M2_YR_PID_I_Out m32 : 30|10@1- (0.1,0) [0|0] "Nm"  Logger,ADL
+ SG_ TV_M2_YR_PID_D_Out m32 : 40|10@1- (0.1,0) [0|0] "Nm"  Logger,ADL
+ SG_ TV_M2_PilotControl_Out_Nm m33 : 50|10@1- (0.1,0) [0|0] "Nm"  Logger,ADL
+ SG_ TV_M2_Trq_YR_PID_Nm m32 : 50|10@1- (0.1,0) [0|0] "Nm"  Logger,ADL
+ SG_ TV_M2_Des_Yaw_Rate_deg_s m32 : 8|12@1- (0.1,0) [-204.8|204.7] "deg/s"  Logger,ADL
+ SG_ TV_M2_Yaw_Rate_Error_corr_deg_s m33 : 38|12@1- (0.1,0) [-204.8|204.7] "deg/s"  Logger,ADL
+ SG_ TV_M2_TC_YR_Error_Reduction_Fac m33 : 28|10@1- (0.01,0) [-5.12|5.11] ""  Logger,ADL
+ SG_ TV_M1_Error_Yaw_Rate_corr_deg_s m18 : 40|12@1- (0.1,0) [-204.8|204.7] "deg/s"  Logger,ADL
+ SG_ TV_M1_Error_Slip_Angle_corr_deg m18 : 28|12@1- (0.01,0) [-20.48|20.47] "deg"  Logger,ADL
+ SG_ TV_Multiplexer_TX M : 0|8@1+ (1,0) [0|0] ""  Logger,ADL
+ SG_ TV_M2_Trq_RR_Nm m33 : 18|10@1- (0.1,0) [0|0] "Nm"  Logger,ADL
+ SG_ TV_M2_Trq_RL_Nm m33 : 8|10@1- (0.1,0) [-50|50] "Nm"  Logger,ADL
+ SG_ TV_M1_Trq_RR_Nm m18 : 18|10@1- (0.1,0) [0|0] "Nm"  Logger,ADL
+ SG_ TV_M1_Trq_RL_Nm m18 : 8|10@1- (0.1,0) [-50|50] "Nm"  Logger,ADL
+ SG_ TV_M1_Des_Yaw_Rate_deg_s m17 : 8|12@1- (0.1,0) [0|0] "deg/s"  Logger,ADL
+ SG_ TV_M1_Des_Slip_Angle_deg m16 : 8|12@1- (0.01,0) [0|0] "deg"  Logger,ADL
+ SG_ TV_M1_YR_PID_P_Out m17 : 20|10@1- (0.1,0) [0|0] "Nm"  Logger,ADL
+ SG_ TV_M1_YR_PID_I_Out m17 : 30|10@1- (0.1,0) [0|0] "Nm"  Logger,ADL
+ SG_ TV_M1_YR_PID_D_Out m17 : 40|10@1- (0.1,0) [0|0] "Nm"  Logger,ADL
+ SG_ TV_M1_SA_PID_P_Out m16 : 20|10@1- (0.1,0) [0|0] "Nm"  Logger,ADL
+ SG_ TV_M1_SA_PID_I_Out m16 : 30|10@1- (0.1,0) [0|0] "Nm"  Logger,ADL
+ SG_ TV_M1_SA_PID_D_Out m16 : 40|10@1- (0.1,0) [0|0] "Nm"  Logger,ADL
+ SG_ TV_M3_SA_rear_des_deg m48 : 8|12@1- (0.01,0) [0|0] "°"  Logger,ADL
+ SG_ TV_M3_SA_rear_act_deg m48 : 20|12@1- (0.01,0) [0|0] "°"  Logger,ADL
+ SG_ TV_M3_Error_Corr_Factor m48 : 32|12@1- (0.01,0) [0|0] ""  Logger,ADL
+ SG_ TV_M3_Error_Rear_Slip_Angle_deg m48 : 44|12@1- (0.01,0) [0|0] "°"  Logger,ADL
+ SG_ TV_M3_Trq_RL_Nm m49 : 8|10@1- (0.1,0) [0|0] "Nm"  Logger,ADL
+ SG_ TV_M3_Trq_RR_Nm m49 : 18|10@1- (0.1,0) [0|0] "Nm"  Logger,ADL
+ SG_ TV_M3_PID_P_Out m49 : 28|10@1- (0.1,0) [0|0] ""  Logger,ADL
+ SG_ TV_M3_PID_I_Out m49 : 38|10@1- (0.1,0) [0|0] ""  Logger,ADL
+ SG_ TV_M3_PID_D_Out m49 : 48|10@1- (0.1,0) [0|0] ""  Logger,ADL
+
+BO_ 565 GB_Recuperation_TX: 8 Gigabox
+ SG_ RE_Active : 58|1@1+ (1,0) [0|1] ""  Logger,ADL
+ SG_ Calculated_X_Acceleration_G : 46|12@1- (0.001,0) [0|0] "G"  Logger,ADL
+ SG_ Ideal_Brake_Trq_Rear_Axle_Nm : 34|12@1- (1,0) [0|0] "Nm"  Logger,ADL
+ SG_ Hydraulic_Brake_Trq_Rear_Axle_Nm : 22|12@1- (1,0) [0|0] "Nm"  Logger,ADL
+ SG_ Electric_Brake_Trq_Rear_Axle_Nm : 10|12@1- (1,0) [0|0] "Nm"  Logger,ADL
+ SG_ RE_Trq_Nm : 0|10@1- (0.1,0) [0|0] "Nm"  Logger,ADL
+
+BO_ 564 GB_Power_Limitation_Sig: 8 Gigabox
+ SG_ PL_Trq_Nm : 0|10@1- (0.1,0) [0|0] "Nm"  Logger,ADL
+ SG_ PL_PID_Reset : 50|1@1+ (1,0) [0|1] ""  Logger,ADL
+ SG_ PL_PID_P_Out : 20|10@1- (0.1,0) [0|0] "Nm"  Logger,ADL
+ SG_ PL_PID_I_Out : 30|10@1- (0.1,0) [0|0] "Nm"  Logger,ADL
+ SG_ PL_PID_D_Out : 40|10@1- (0.1,0) [0|0] "Nm"  Logger,ADL
+ SG_ PL_Max_Power_kW : 51|11@1+ (0.1,0) [0|0] "kW"  Logger,ADL
+ SG_ PL_Feed_Forward_Trq_Nm : 10|10@1- (0.1,0) [0|0] "Nm"  Logger,ADL
+
+BO_ 563 GB_Traction_Control_TX: 8 Gigabox
+ SG_ KF_Active m0 : 56|1@1+ (1,0) [0|1] ""  Logger
+ SG_ KF_SlipAim m0 : 48|8@1- (1,0) [-100|100] "%"  Logger
+ SG_ TC_rpm_lim m1 : 46|16@1- (1,0) [0|0] "rpm"  Logger
+ SG_ TC_rpm_lim_enable m1 : 45|1@1+ (1,0) [0|0] ""  Logger
+ SG_ TC_Active m0 : 44|1@1+ (1,0) [0|1] ""  Logger,ADL
+ SG_ TC_Multiplexer_TX M : 0|4@1+ (1,0) [0|15] ""  Logger,ADL
+ SG_ TC_Trq_RR_Nm m1 : 4|10@1- (0.1,0) [-51.2|51.1] "Nm"  Logger,ADL
+ SG_ TC_Trq_RL_Nm m0 : 4|10@1- (0.1,0) [-51.2|51.1] "Nm"  Logger,ADL
+ SG_ TC_RR_PID_P_Out m1 : 14|10@1- (0.1,0) [-51.2|51.1] "Nm"  Logger,ADL
+ SG_ TC_RR_PID_I_Out m1 : 24|10@1- (0.1,0) [-51.2|51.1] "Nm"  Logger,ADL
+ SG_ TC_RR_PID_D_Out m1 : 34|10@1- (0.1,0) [-51.2|51.1] "Nm"  Logger,ADL
+ SG_ TC_RL_PID_P_Out m0 : 14|10@1- (0.1,0) [-51.2|51.1] "Nm"  Logger,ADL
+ SG_ TC_RL_PID_I_Out m0 : 24|10@1- (0.1,0) [-51.2|51.1] "Nm"  Logger,ADL
+ SG_ TC_RL_PID_D_Out m0 : 34|10@1- (0.1,0) [-51.2|51.1] "Nm"  Logger,ADL
+
+BO_ 562 GB_Energy_Limitation_Sig: 8 Gigabox
+ SG_ EL_PID_P_Out : 14|14@1- (0.01,0) [-81.92|81.91] ""  Logger,ADL
+ SG_ EL_PID_I_Out : 28|14@1- (0.01,0) [-81.92|81.91] ""  Logger,ADL
+ SG_ EL_PID_D_Out : 42|14@1- (0.01,0) [-81.92|81.91] ""  Logger,ADL
+ SG_ EL_Parameter : 0|14@1- (0.01,0) [-81.92|81.91] ""  Logger,ADL
+ SG_ EL_Active : 56|1@1+ (1,0) [0|1] ""  Logger,ADL
+
+BO_ 561 GB_Processed_Values_Sig: 8 Gigabox
+ SG_ State_of_charge m2 : 8|8@1+ (1,0) [0|0] "%" Vector__XXX
+ SG_ Giga_Tronic_Speed m1 : 60|1@1+ (1,0) [0|0] ""  Logger
+ SG_ MSP_Error m1 : 59|1@1+ (1,0) [0|0] ""  Logger
+ SG_ Mapping_Mode m1 : 52|4@1+ (1,0) [0|0] ""  Logger
+ SG_ APPS_Error m1 : 58|1@1+ (1,0) [0|0] ""  Logger
+ SG_ TBP_Error m1 : 57|1@1+ (1,0) [0|0] ""  Logger
+ SG_ MSDC m1 : 56|1@1+ (1,0) [0|0] ""  Logger
+ SG_ Used_Energy_kWh m1 : 4|10@1+ (0.01,0) [0|0] "kWh"  Logger,ADL
+ SG_ Predicted_Energy_Usage_kWh m1 : 14|8@1+ (0.1,0) [0|0] "kWh"  Logger,ADL
+ SG_ Maximum_Torque_Nm m1 : 42|10@1- (0.1,0) [0|0] "Nm"  Logger,ADL
+ SG_ Trq_Cmd_RR_Nm m1 : 32|10@1- (0.1,0) [-51.2|51.1] "Nm"  Logger,ADL
+ SG_ Trq_Cmd_RL_Nm m1 : 22|10@1- (0.1,0) [-51.2|51.1] "Nm"  Logger,ADL
+ SG_ Driven_Distance_m m0 : 48|15@1+ (1,0) [0|32767] "m"  Logger,ADL
+ SG_ Slip_Ratio_RR m0 : 37|11@1- (0.1,0) [0|0] "%"  Logger,ADL
+ SG_ Slip_Ratio_RL m0 : 26|11@1- (0.1,0) [0|0] "%"  Logger,ADL
+ SG_ DC_Bus_Power_kW m0 : 15|11@1- (0.1,0) [0|0] "kW"  Logger,ADL
+ SG_ v_Vehicle_km_h m0 : 4|11@1+ (0.1,0) [0|0] "km/h"  Logger,ADL
+ SG_ Processed_Values_Multiplexer M : 0|4@1+ (1,0) [0|0] ""  Logger,ADL
+
+BO_ 1026 ADL_General_Gigabox_Const: 8 ADL
+ SG_ Multiplexer_4Bit M : 0|4@1+ (1,0) [0|0] ""  Logger
+ SG_ TC_Slip_Aim_0_100 m1 : 8|8@1+ (1,0) [0|100] "%"  Logger
+ SG_ PL_Max_Power_kW m1 : 16|8@1+ (1,0) [0|0] "kW"  Logger
+ SG_ EL_Activation_Distance_m m1 : 32|8@1+ (100,0) [500|2500] "m"  Logger
+ SG_ EL_Max_Energy_kWh m1 : 40|8@1- (0.1,0) [0|7.4] "kWh"  Logger
+ SG_ RE_Factor m1 : 24|8@1+ (0.1,0) [0|10] ""  Logger
+ SG_ WLC_Slip_Aim_0_100 m1 : 48|8@1- (1,0) [-100|100] "%"  Logger
+ SG_ GPconst9 m4 : 40|16@1- (1,0) [0|0] ""  Logger
+ SG_ GPconst8 m4 : 24|16@1- (1,0) [0|0] ""  Logger
+ SG_ GPconst7 m4 : 8|16@1- (1,0) [0|0] ""  Logger
+ SG_ GPconst6 m3 : 40|16@1- (1,0) [0|0] ""  Logger
+ SG_ GPconst5 m3 : 24|16@1- (1,0) [0|0] ""  Logger
+ SG_ GPconst4 m3 : 8|16@1- (1,0) [0|0] ""  Logger
+ SG_ GPconst3 m2 : 40|16@1- (1,0) [0|0] ""  Logger
+ SG_ GPconst2 m2 : 24|16@1- (1,0) [0|0] ""  Logger
+ SG_ GPconst12 m5 : 40|16@1- (1,0) [0|0] ""  Logger
+ SG_ GPconst11 m5 : 24|16@1- (1,0) [0|0] ""  Logger
+ SG_ GPconst10 m5 : 8|16@1- (1,0) [0|0] ""  Logger
+ SG_ GPconst1 m2 : 8|16@1- (1,0) [0|0] ""  Logger
+ SG_ DD_Max_Torque_Speed m0 : 24|8@1+ (0.1,0) [0|0] "km/h"  Logger,Gigabox
+ SG_ DD_Max_Torque_Nm m0 : 40|8@1+ (1,0) [0|0] "Nm"  Logger,Gigabox
+ SG_ DD_Max_Torque0 m0 : 16|8@1+ (1,0) [0|30] "Nm"  Logger,Gigabox
+ SG_ DD_Max_Neg_Trq_Nm m0 : 32|8@1- (1,0) [0|0] "Nm"  Logger,Gigabox
+ SG_ DD_Drag_Torque_Nm m0 : 8|8@1- (1,0) [0|0] "Nm"  Logger,Gigabox
+ SG_ ACC_max_km_h m0 : 48|8@1+ (1,0) [0|0] "km/h"  Logger,Gigabox
+
+BO_ 1025 ADL_Gigabox_GeneralControls: 2 ADL
+ SG_ GigaboxFlashMode : 7|1@1+ (1,0) [0|0] ""  Logger
+ SG_ WLC_Enable : 6|1@1+ (1,0) [0|1] ""  Logger
+ SG_ TV_Mode : 10|4@1+ (1,0) [0|0] ""  Logger,Gigabox
+ SG_ TC_Enable : 5|1@1+ (1,0) [0|1] ""  Logger,Gigabox
+ SG_ RE_Enable : 9|1@1+ (1,0) [0|1] ""  Logger,Gigabox
+ SG_ PL_Enable : 8|1@1+ (1,0) [0|1] ""  Logger,Gigabox
+ SG_ EL_Enable : 14|1@1+ (1,0) [0|1] ""  Logger,Gigabox
+
+BO_ 321 PDM_Transmit_Data: 8 PDM
+ SG_ PDM_error_flag : 48|16@1+ (1,0) [0|65535] "" Vector__XXX
+ SG_ PDM_max_temp : 24|8@1+ (1,0) [0|255] "°C" Vector__XXX
+ SG_ PDM_total_current : 0|16@1+ (0.001,0) [1|65536] "A"  Logger
+ SG_ PDM_avg_voltage : 32|16@1+ (0.001,0) [1|65536] "V"  Logger
+ SG_ PDM_avg_temp : 16|8@1+ (1,0) [0|255] "°C"  Logger
+
+BO_ 320 GB_Set_Request_Channels: 8 Gigabox
+ SG_ PDM_Ch_Logger_req : 13|1@1+ (1,0) [0|1] "" Vector__XXX
+ SG_ PDM_Ch_MC_req : 17|1@1+ (1,0) [0|1] ""  Logger,PDM
+ SG_ PDM_Ch_SC_Supply_req : 16|1@1+ (1,0) [0|1] ""  Logger,PDM
+ SG_ PDM_Ch_GB_KL30_req : 15|1@1+ (1,0) [0|1] ""  Logger,PDM
+ SG_ PDM_Ch_GB_KL15_req : 14|1@1+ (1,0) [0|1] ""  Logger,PDM
+ SG_ PDM_Ch_Dash_req : 12|1@1+ (1,0) [0|1] ""  Logger,PDM
+ SG_ PDM_Ch_Waterpump_2_req : 11|1@1+ (1,0) [0|1] ""  Logger,PDM
+ SG_ PDM_Ch_Waterpump_1_req : 10|1@1+ (1,0) [0|1] ""  Logger,PDM
+ SG_ PDM_Ch_CSI_rear_req : 9|1@1+ (1,0) [0|1] ""  Logger,PDM
+ SG_ PDM_Ch_Brakelight_req : 8|1@1+ (1,0) [0|1] ""  Logger,PDM
+ SG_ PDM_Ch_Diag_AHRS_req : 7|1@1+ (1,0) [0|1] ""  Logger,PDM
+ SG_ PDM_Ch_Sound_req : 6|1@1+ (1,0) [0|1] ""  Logger,PDM
+ SG_ PDM_Ch_Fan_6_req : 5|1@1+ (1,0) [0|1] ""  Logger,PDM
+ SG_ PDM_Ch_Fan_5_req : 4|1@1+ (1,0) [0|1] ""  Logger,PDM
+ SG_ PDM_Ch_Fan_4_req : 3|1@1+ (1,0) [0|1] ""  Logger,PDM
+ SG_ PDM_Ch_Fan_3_req : 2|1@1+ (1,0) [0|1] ""  Logger,PDM
+ SG_ PDM_Ch_Fan_2_req : 1|1@1+ (1,0) [0|1] ""  Logger,PDM
+ SG_ PDM_Ch_Fan_1_req : 0|1@1+ (1,0) [0|0] ""  Logger,PDM
+
+BO_ 229 Beacon_Data: 8 Beacon
+
+BO_ 1603 CSI4_Wheelspeed_RL: 8 CSI_4_REAR_Left
+ SG_ WheelSpeed_RL : 0|32@1- (0.001,0) [0|0] "m/s"  Logger,Gigabox
+
+BO_ 1602 CSI4_BatInTemp_DMP_RL: 8 CSI_4_REAR_Left
+ SG_ Temp_Battery_Inlet : 0|32@1- (0.1,0) [0|0] "°C"  Logger,ADL
+ SG_ DMP_RL : 32|32@1- (0.01,0) [0|0] "mm"  Logger,ADL,Gigabox
+
+BO_ 1601 CSI4_Temp_MoLeft_MoRight: 8 CSI_4_REAR_Left
+ SG_ Temp_Motor_Right : 32|32@1- (0.1,0) [0|0] "°C"  Logger
+ SG_ Temp_Motor_Left : 0|32@1- (0.1,0) [0|0] "°C"  Logger,Gigabox
+
+BO_ 1608 CSI4_CurrentVoltage: 8 CSI_4_REAR_Left
+ SG_ Sens_Mux : 0|4@1+ (1,0) [0|0] ""  Logger
+ SG_ CurrentVoltage : 16|16@1+ (0.002,0) [0|0] "V"  Logger
+
+BO_ 1600 CSI4_Status: 8 CSI_4_REAR_Left
+ SG_ Con_DIG_Sens m4 : 12|1@1+ (1,0) [0|0] ""  Logger
+ SG_ Con_ANA_Sens4 m3 : 12|1@1+ (1,0) [0|0] ""  Logger
+ SG_ Con_ANA_Sens3 m2 : 12|1@1+ (1,0) [0|0] ""  Logger
+ SG_ Con_ANA_Sens2 m1 : 12|1@1+ (1,0) [0|0] ""  Logger
+ SG_ Con_ANA_Sens1 m0 : 12|1@1+ (1,0) [0|0] ""  Logger
+ SG_ DIG_Speed_Ticks_per_Rotation m4 : 16|8@1+ (1,0) [0|0] ""  Logger
+ SG_ DIG_Speed_Radius_mm m4 : 32|16@1+ (1,0) [0|0] ""  Logger
+ SG_ Con_Mode_DIG_Sens m4 : 8|2@1+ (1,0) [0|0] ""  Logger
+ SG_ Con_Mode_ANA_Sens4 m3 : 8|2@1+ (1,0) [0|0] ""  Logger
+ SG_ Con_Mode_ANA_Sens3 m2 : 8|2@1+ (1,0) [0|0] ""  Logger
+ SG_ Con_Mode_ANA_Sens2 m1 : 8|2@1+ (1,0) [0|0] ""  Logger
+ SG_ Con_Mode_ANA_Sens1 m0 : 8|2@1+ (1,0) [0|0] ""  Logger
+ SG_ Sens_Mux M : 0|4@1+ (1,0) [0|0] ""  Logger
+ SG_ ANA_Sens4_Offset m3 : 16|16@1- (1,0) [0|0] ""  Logger
+ SG_ ANA_Sens4_Faktor m3 : 32|16@1- (1,0) [0|0] ""  Logger
+ SG_ ANA_Sens3_Offset m2 : 16|16@1- (1,0) [0|0] ""  Logger
+ SG_ ANA_Sens3_Faktor m2 : 32|16@1- (1,0) [0|0] ""  Logger
+ SG_ ANA_Sens2_Offset m1 : 16|16@1- (1,0) [0|0] ""  Logger
+ SG_ ANA_Sens2_Faktor m1 : 32|16@1- (1,0) [0|0] ""  Logger
+ SG_ ANA_Sens1_Offset m0 : 16|16@1- (1,0) [0|0] ""  Logger
+ SG_ ANA_Sens1_Faktor m0 : 32|16@1- (1,0) [0|0] ""  Logger
+
+BO_ 1576 CSI2_CurrentVoltage: 8 CSI_2_Front_Middle
+ SG_ Sens_Mux : 0|4@1+ (1,0) [0|0] ""  Logger
+ SG_ CurrentVoltage : 16|16@1+ (0.002,0) [0|0] "V"  Logger
+
+BO_ 1571 CSI2_RearRight_Button: 4 CSI_2_Front_Middle
+ SG_ DASH_BUTTON_RL : 0|32@1- (1,0) [0|0] ""  Logger,Gigabox
+
+BO_ 1570 CSI2_RearLeftButton_BrkPr_rear: 8 CSI_2_Front_Middle
+ SG_ BrkPres_Rear : 32|32@1- (1,0) [0|0] "kPa"  Logger,Gigabox
+ SG_ DASH_BUTTON_RR : 0|32@1- (1,0) [0|0] ""  Logger,Gigabox
+
+BO_ 1569 CSI2_BlueButton_RedButton: 8 CSI_2_Front_Middle
+ SG_ DASH_BUTTON_Red : 32|32@1- (1,0) [0|0] ""  Logger,Gigabox
+ SG_ DASH_BUTTON_Blue : 0|32@1- (1,0) [0|0] ""  Logger,Gigabox
+
+BO_ 1568 CSI2_Status: 8 CSI_2_Front_Middle
+ SG_ Con_DIG_Sens m4 : 12|1@1+ (1,0) [0|0] ""  Logger
+ SG_ Con_ANA_Sens4 m3 : 12|1@1+ (1,0) [0|0] ""  Logger
+ SG_ Con_ANA_Sens3 m2 : 12|1@1+ (1,0) [0|0] ""  Logger
+ SG_ Con_ANA_Sens2 m1 : 12|1@1+ (1,0) [0|0] ""  Logger
+ SG_ Con_ANA_Sens1 m0 : 12|1@1+ (1,0) [0|0] ""  Logger
+ SG_ DIG_Speed_Ticks_per_Rotation m4 : 16|8@1+ (1,0) [0|0] ""  Logger
+ SG_ DIG_Speed_Radius_mm m4 : 32|16@1+ (1,0) [0|0] ""  Logger
+ SG_ Con_Mode_DIG_Sens m4 : 8|2@1+ (1,0) [0|0] ""  Logger
+ SG_ Con_Mode_ANA_Sens4 m3 : 8|2@1+ (1,0) [0|0] ""  Logger
+ SG_ Con_Mode_ANA_Sens3 m2 : 8|2@1+ (1,0) [0|0] ""  Logger
+ SG_ Con_Mode_ANA_Sens2 m1 : 8|2@1+ (1,0) [0|0] ""  Logger
+ SG_ Con_Mode_ANA_Sens1 m0 : 8|2@1+ (1,0) [0|0] ""  Logger
+ SG_ Sens_Mux M : 0|4@1+ (1,0) [0|0] ""  Logger
+ SG_ ANA_Sens4_Offset m3 : 16|16@1- (1,0) [0|0] ""  Logger
+ SG_ ANA_Sens4_Faktor m3 : 32|16@1- (1,0) [0|0] ""  Logger
+ SG_ ANA_Sens3_Offset m2 : 16|16@1- (1,0) [0|0] ""  Logger
+ SG_ ANA_Sens3_Faktor m2 : 32|16@1- (1,0) [0|0] ""  Logger
+ SG_ ANA_Sens2_Offset m1 : 16|16@1- (1,0) [0|0] ""  Logger
+ SG_ ANA_Sens2_Faktor m1 : 32|16@1- (1,0) [0|0] ""  Logger
+ SG_ ANA_Sens1_Offset m0 : 16|16@1- (1,0) [0|0] ""  Logger
+ SG_ ANA_Sens1_Faktor m0 : 32|16@1- (1,0) [0|0] ""  Logger
+
+BO_ 1592 CSI3_CurrentVoltage: 8 CSI_3_REAR_Right
+ SG_ Sens_Mux : 0|4@1+ (1,0) [0|0] ""  Logger
+ SG_ CurrentVoltage : 16|16@1+ (0.002,0) [0|0] "V"  Logger
+
+BO_ 1587 CSI3_Wheelspeed_RR: 8 CSI_3_REAR_Right
+ SG_ WheelSpeed_RR : 0|32@1- (0.001,0) [0|0] "m/s"  Logger,Gigabox
+
+BO_ 1586 CSI3_Between_Temp_DMP_RR: 8 CSI_3_REAR_Right
+ SG_ DMP_RR : 32|32@1- (0.01,0) [0|0] "mm"  Logger
+ SG_ BetweenTemp : 0|32@1- (0.1,0) [0|0] "°C"  Logger
+
+BO_ 1585 CSI3_InvTemp1_InvTemp2: 8 CSI_3_REAR_Right
+ SG_ Temp_Inv_2 : 32|32@1- (0.1,0) [0|0] "°C"  Logger
+ SG_ Temp_Inv_1 : 0|32@1- (0.1,0) [0|0] "°C"  Logger
+
+BO_ 1584 CSI3_Status: 8 CSI_3_REAR_Right
+ SG_ Con_DIG_Sens m4 : 12|1@1+ (1,0) [0|0] ""  Logger
+ SG_ Con_ANA_Sens4 m3 : 12|1@1+ (1,0) [0|0] ""  Logger
+ SG_ Con_ANA_Sens3 m2 : 12|1@1+ (1,0) [0|0] ""  Logger
+ SG_ Con_ANA_Sens2 m1 : 12|1@1+ (1,0) [0|0] ""  Logger
+ SG_ Con_ANA_Sens1 m0 : 12|1@1+ (1,0) [0|0] ""  Logger
+ SG_ DIG_Speed_Ticks_per_Rotation m4 : 16|8@1+ (1,0) [0|0] ""  Logger
+ SG_ DIG_Speed_Radius_mm m4 : 32|16@1+ (1,0) [0|0] ""  Logger
+ SG_ Con_Mode_DIG_Sens m4 : 8|2@1+ (1,0) [0|0] ""  Logger
+ SG_ Con_Mode_ANA_Sens4 m3 : 8|2@1+ (1,0) [0|0] ""  Logger
+ SG_ Con_Mode_ANA_Sens3 m2 : 8|2@1+ (1,0) [0|0] ""  Logger
+ SG_ Con_Mode_ANA_Sens2 m1 : 8|2@1+ (1,0) [0|0] ""  Logger
+ SG_ Con_Mode_ANA_Sens1 m0 : 8|2@1+ (1,0) [0|0] ""  Logger
+ SG_ Sens_Mux M : 0|4@1+ (1,0) [0|0] ""  Logger
+ SG_ ANA_Sens4_Offset m3 : 16|16@1- (1,0) [0|0] ""  Logger
+ SG_ ANA_Sens4_Faktor m3 : 32|16@1- (1,0) [0|0] ""  Logger
+ SG_ ANA_Sens3_Offset m2 : 16|16@1- (1,0) [0|0] ""  Logger
+ SG_ ANA_Sens3_Faktor m2 : 32|16@1- (1,0) [0|0] ""  Logger
+ SG_ ANA_Sens2_Offset m1 : 16|16@1- (1,0) [0|0] ""  Logger
+ SG_ ANA_Sens2_Faktor m1 : 32|16@1- (1,0) [0|0] ""  Logger
+ SG_ ANA_Sens1_Offset m0 : 16|16@1- (1,0) [0|0] ""  Logger
+ SG_ ANA_Sens1_Faktor m0 : 32|16@1- (1,0) [0|0] ""  Logger
+
+BO_ 1556 CSI1_Precharge_LED_Control: 8 BCU
+ SG_ Precharge_LED : 0|1@1+ (1,0) [0|0] "" Vector__XXX
+
+BO_ 1560 CSI1_CurrentVoltage: 8 CSI_1_Front_Right
+ SG_ Sens_Mux : 0|4@1+ (1,0) [0|0] ""  Logger
+ SG_ CurrentVoltage : 16|16@1+ (0.002,0) [0|0] "V"  Logger
+
+BO_ 1544 CSI0_CurrentVoltage: 8 CSI_0_Front_Left
+ SG_ Sens_Mux : 0|4@1+ (1,0) [0|0] ""  Logger
+ SG_ CurrentVoltage : 16|16@1+ (0.002,0) [0|0] "V"  Logger
+
+BO_ 1539 CSI0_Wheelspeed_FL: 8 CSI_0_Front_Left
+ SG_ WheelSpeed_FL : 0|32@1- (0.001,0) [0|0] "m/s"  Logger,Gigabox
+
+BO_ 1538 CSI0_APPS2_DMP_FL: 8 CSI_0_Front_Left
+ SG_ APPS2 : 0|32@1- (0.1,0) [200|300] "%"  Logger,ADL
+ SG_ DMP_FL : 32|32@1- (0.01,0) [0|0] "mm"  Logger,ADL,Gigabox
+
+BO_ 1537 CSI0_ATEMP_APPS1: 8 CSI_0_Front_Left
+ SG_ APPS1 : 32|32@1- (0.1,0) [200|300] "%"  Logger,ADL
+ SG_ ATEMP : 0|32@1- (0.1,0) [0|0] "°C"  Logger,ADL
+
+BO_ 1536 CSI0_Status: 8 CSI_0_Front_Left
+ SG_ Con_DIG_Sens m4 : 12|1@1+ (1,0) [0|0] ""  Logger
+ SG_ Con_ANA_Sens4 m3 : 12|1@1+ (1,0) [0|0] ""  Logger
+ SG_ Con_ANA_Sens3 m2 : 12|1@1+ (1,0) [0|0] ""  Logger
+ SG_ Con_ANA_Sens2 m1 : 12|1@1+ (1,0) [0|0] ""  Logger
+ SG_ Con_ANA_Sens1 m0 : 12|1@1+ (1,0) [0|0] ""  Logger
+ SG_ DIG_Speed_Ticks_per_Rotation m4 : 16|8@1+ (1,0) [0|0] ""  Logger
+ SG_ DIG_Speed_Radius_mm m4 : 32|16@1+ (1,0) [0|0] ""  Logger
+ SG_ Con_Mode_DIG_Sens m4 : 8|2@1+ (1,0) [0|0] ""  Logger
+ SG_ Con_Mode_ANA_Sens4 m3 : 8|2@1+ (1,0) [0|0] ""  Logger
+ SG_ Con_Mode_ANA_Sens3 m2 : 8|2@1+ (1,0) [0|0] ""  Logger
+ SG_ Con_Mode_ANA_Sens2 m1 : 8|2@1+ (1,0) [0|0] ""  Logger
+ SG_ Con_Mode_ANA_Sens1 m0 : 8|2@1+ (1,0) [0|0] ""  Logger
+ SG_ Sens_Mux M : 0|4@1+ (1,0) [0|0] ""  Logger
+ SG_ ANA_Sens4_Offset m3 : 16|16@1- (1,0) [0|0] ""  Logger
+ SG_ ANA_Sens4_Faktor m3 : 32|16@1- (1,0) [0|0] ""  Logger
+ SG_ ANA_Sens3_Offset m2 : 16|16@1- (1,0) [0|0] ""  Logger
+ SG_ ANA_Sens3_Faktor m2 : 32|16@1- (1,0) [0|0] ""  Logger
+ SG_ ANA_Sens2_Offset m1 : 16|16@1- (1,0) [0|0] ""  Logger
+ SG_ ANA_Sens2_Faktor m1 : 32|16@1- (1,0) [0|0] ""  Logger
+ SG_ ANA_Sens1_Offset m0 : 16|16@1- (1,0) [0|0] ""  Logger
+ SG_ ANA_Sens1_Faktor m0 : 32|16@1- (1,0) [0|0] ""  Logger
+
+BO_ 1555 CSI1_Wheelspeed_FR: 8 CSI_1_Front_Right
+ SG_ WheelSpeed_FR : 0|32@1- (0.001,0) [0|0] "m/s"  Logger,Gigabox
+
+BO_ 1554 CSI1_STA_DMP_FR: 8 CSI_1_Front_Right
+ SG_ STA : 0|32@1- (0.1,0) [0|0] "°"  Logger
+ SG_ DMP_FR : 32|32@1- (0.01,0) [0|0] "mm"  Logger,Gigabox
+
+BO_ 1553 CSI1_BrkPres_front: 8 CSI_1_Front_Right
+ SG_ BrkPres_Front : 32|32@1- (1,0) [0|0] "kPa"  Logger
+
+BO_ 1552 CSI1_Status: 8 CSI_1_Front_Right
+ SG_ Con_DIG_Sens m4 : 12|1@1+ (1,0) [0|0] ""  Logger
+ SG_ Con_ANA_Sens4 m3 : 12|1@1+ (1,0) [0|0] ""  Logger
+ SG_ Con_ANA_Sens3 m2 : 12|1@1+ (1,0) [0|0] ""  Logger
+ SG_ Con_ANA_Sens2 m1 : 12|1@1+ (1,0) [0|0] ""  Logger
+ SG_ Con_ANA_Sens1 m0 : 12|1@1+ (1,0) [0|0] ""  Logger
+ SG_ DIG_Speed_Ticks_per_Rotation m4 : 16|8@1+ (1,0) [0|0] ""  Logger
+ SG_ DIG_Speed_Radius_mm m4 : 32|16@1+ (1,0) [0|0] ""  Logger
+ SG_ Con_Mode_DIG_Sens m4 : 8|2@1+ (1,0) [0|0] ""  Logger
+ SG_ Con_Mode_ANA_Sens4 m3 : 8|2@1+ (1,0) [0|0] ""  Logger
+ SG_ Con_Mode_ANA_Sens3 m2 : 8|2@1+ (1,0) [0|0] ""  Logger
+ SG_ Con_Mode_ANA_Sens2 m1 : 8|2@1+ (1,0) [0|0] ""  Logger
+ SG_ Con_Mode_ANA_Sens1 m0 : 8|2@1+ (1,0) [0|0] ""  Logger
+ SG_ Sens_Mux M : 0|4@1+ (1,0) [0|0] ""  Logger
+ SG_ ANA_Sens4_Offset m3 : 16|16@1- (1,0) [0|0] ""  Logger
+ SG_ ANA_Sens4_Faktor m3 : 32|16@1- (1,0) [0|0] ""  Logger
+ SG_ ANA_Sens3_Offset m2 : 16|16@1- (1,0) [0|0] ""  Logger
+ SG_ ANA_Sens3_Faktor m2 : 32|16@1- (1,0) [0|0] ""  Logger
+ SG_ ANA_Sens2_Offset m1 : 16|16@1- (1,0) [0|0] ""  Logger
+ SG_ ANA_Sens2_Faktor m1 : 32|16@1- (1,0) [0|0] ""  Logger
+ SG_ ANA_Sens1_Offset m0 : 16|16@1- (1,0) [0|0] ""  Logger
+ SG_ ANA_Sens1_Faktor m0 : 32|16@1- (1,0) [0|0] ""  Logger
+
+BO_TX_BU_ 1620 : CSI_5_DASH,PDM;
+
+
+CM_ BO_ 3221225472 "This is a message for not used signals, created by Vector CANdb++ DBC OLE DB Provider.";
+CM_ SG_ 1793 BSC_PrechageReq "Workaround message signal send from the BSC";
+BA_DEF_ SG_  "GenSigInactiveValue" INT 0 0;
+BA_DEF_ SG_  "GenSigSendType" ENUM  "Cyclic","OnWrite","OnWriteWithRepetition","OnChange","OnChangeWithRepetition","IfActive","IfActiveWithRepetition","NoSigSendType";
+BA_DEF_ BO_  "GenMsgSendType" ENUM  "Cyclic","not_used","not_used","not_used","not_used","Cyclic","not_used","IfActive","NoMsgSendType";
+BA_DEF_ BO_  "GenMsgCycleTime" INT 0 0;
+BA_DEF_ BO_  "GenMsgTimeoutTime" INT 0 0;
+BA_DEF_ BU_  "NmStationAddress" HEX 0 0;
+BA_DEF_  "DBName" STRING ;
+BA_DEF_  "Bus Speed" STRING ;
+BA_DEF_  "BusType" STRING ;
+BA_DEF_ BU_  "NodeLayerModules" STRING ;
+BA_DEF_ BU_  "ECU" STRING ;
+BA_DEF_ BU_  "CANoeJitterMax" INT 0 0;
+BA_DEF_ BU_  "CANoeJitterMin" INT 0 0;
+BA_DEF_ BU_  "CANoeDrift" INT 0 0;
+BA_DEF_ BU_  "CANoeStartDelay" INT 0 0;
+BA_DEF_DEF_  "GenSigInactiveValue" 0;
+BA_DEF_DEF_  "GenSigSendType" "Cyclic";
+BA_DEF_DEF_  "GenMsgSendType" "NoMsgSendType";
+BA_DEF_DEF_  "GenMsgCycleTime" 0;
+BA_DEF_DEF_  "GenMsgTimeoutTime" 0;
+BA_DEF_DEF_  "NmStationAddress" 0;
+BA_DEF_DEF_  "DBName" "";
+BA_DEF_DEF_  "Bus Speed" "500k";
+BA_DEF_DEF_  "BusType" "";
+BA_DEF_DEF_  "NodeLayerModules" "";
+BA_DEF_DEF_  "ECU" "";
+BA_DEF_DEF_  "CANoeJitterMax" 0;
+BA_DEF_DEF_  "CANoeJitterMin" 0;
+BA_DEF_DEF_  "CANoeDrift" 0;
+BA_DEF_DEF_  "CANoeStartDelay" 0;
+BA_ "BusType" "CAN";
+BA_ "Bus Speed" "1000";
+BA_ "DBName" "Vehicle_CAN";
+VAL_ 322 PDM_ASSI_STATE 5 "AS_Emergency" 4 "AS_Finished" 3 "AS_Driving" 2 "AS_Ready" 1 "AS_Off" 0 "AS_Invalid" ;
+VAL_ 164 INERTIA 1 "ok" 0 "error" ;
+VAL_ 164 pilotline 1 "ok" 0 "error" ;
+VAL_ 164 Shutdown 1 "ok" 0 "error" ;
+VAL_ 164 BPD_Failure 1 "ok" 0 "error" ;
+VAL_ 164 IMD_Failure 1 "ok" 0 "error" ;
+VAL_ 164 Interlock_MC 1 "ok" 0 "error" ;
+VAL_ 164 Safety_Circuit_open 1 "ok" 0 "error" ;
+VAL_ 164 BOTS 1 "ok" 0 "error" ;
+VAL_ 321 PDM_error_flag 4 "GIGABOX OFFLINE" 3 "WATERPUMP DERATING" 2 "OVERLOAD DETECTED" 1 "FAN DERATING" 0 "Normal Operation" ;
+VAL_ 320 PDM_Ch_Logger_req 2 "OVERLOAD" 1 "ON" 0 "OFF" ;
+VAL_ 320 PDM_Ch_MC_req 2 "OVERLOAD" 1 "ON" 0 "OFF" ;
+VAL_ 320 PDM_Ch_SC_Supply_req 2 "OVERLOAD" 1 "ON" 0 "OFF" ;
+VAL_ 320 PDM_Ch_GB_KL30_req 2 "OVERLOAD" 1 "ON" 0 "OFF" ;
+VAL_ 320 PDM_Ch_GB_KL15_req 2 "OVERLOAD" 1 "ON" 0 "OFF" ;
+VAL_ 320 PDM_Ch_Dash_req 2 "OVERLOAD" 1 "ON" 0 "OFF" ;
+VAL_ 320 PDM_Ch_Waterpump_2_req 2 "OVERLOAD" 1 "ON" 0 "OFF" ;
+VAL_ 320 PDM_Ch_Waterpump_1_req 2 "OVERLOAD" 1 "ON" 0 "OFF" ;
+VAL_ 320 PDM_Ch_CSI_rear_req 2 "OVERLOAD" 1 "ON" 0 "OFF" ;
+VAL_ 320 PDM_Ch_Brakelight_req 2 "OVERLOAD" 1 "ON" 0 "OFF" ;
+VAL_ 320 PDM_Ch_Diag_AHRS_req 2 "OVERLOAD" 1 "ON" 0 "OFF" ;
+VAL_ 320 PDM_Ch_Sound_req 2 "OVERLOAD" 1 "ON" 0 "OFF" ;
+VAL_ 320 PDM_Ch_Fan_6_req 2 "OVERLOAD" 1 "ON" 0 "OFF" ;
+VAL_ 320 PDM_Ch_Fan_5_req 2 "OVERLOAD" 1 "ON" 0 "OFF" ;
+VAL_ 320 PDM_Ch_Fan_4_req 2 "OVERLOAD" 1 "ON" 0 "OFF" ;
+VAL_ 320 PDM_Ch_Fan_3_req 2 "OVERLOAD" 1 "ON" 0 "OFF" ;
+VAL_ 320 PDM_Ch_Fan_2_req 2 "OVERLOAD" 1 "ON" 0 "OFF" ;
+VAL_ 320 PDM_Ch_Fan_1_req 2 "OVERLOAD" 1 "ON" 0 "OFF" ;
+SIG_VALTYPE_ 569 AHRS_yawt : 1;
+SIG_VALTYPE_ 854 AHRS_samplerate : 1;
+SIG_VALTYPE_ 853 AHRS_gyroz : 1;
+SIG_VALTYPE_ 853 AHRS_gyroy : 1;
+SIG_VALTYPE_ 852 AHRS_gyrox : 1;
+SIG_VALTYPE_ 852 AHRS_accelz : 1;
+SIG_VALTYPE_ 851 AHRS_accely : 1;
+SIG_VALTYPE_ 851 AHRS_accelx : 1;
+SIG_VALTYPE_ 850 AHRS_magpz : 1;
+SIG_VALTYPE_ 850 AHRS_magpy : 1;
+SIG_VALTYPE_ 849 AHRS_magpx : 1;
+SIG_VALTYPE_ 849 AHRS_yawt : 1;
+SIG_VALTYPE_ 848 AHRS_roll : 1;
+SIG_VALTYPE_ 848 AHRS_pitch : 1;
+
