@@ -2,8 +2,9 @@
 ## Unfinished/Dysfunctional ##
 * Add click handlers to play and track buttons.
 * Improve checklist to show channel group name associated with each channel.
-  * In DBC the last string for each line beginning with BO_ is a channel group name
+  * In DBC the last string for each line beginning with BO_ is a channel group name.
 ## Next tasks ##
+* Graph customization options including yyaxis, multiplot, custom x/time by y/time with interpolation.
 * Confirm with team what channels are needed to get steering wheel (STA), accel (APPS1/APPS2) and brake (BrkPres_Front).
 * Find graphics for steering wheel to apply to main window.
 * Provide User graph display options.
