@@ -55,26 +55,27 @@ class main(QtWidgets.QMainWindow):
     def __init__(self, parent=None):
         super(main, self).__init__(parent)
 
-        self.channel_list = []
-        self.mdf_list = []
-        self.play_status = False
+        self.curr_tabs = [] # List of Tab class object currently present and displayed on GUI.
+        self.channel_list = [] # List of channel names desired by user on next plot update.
+        self.mdf_list = [] # List of available channels in MDF to crossreference with the DBC checklist.
+        self.play_status = False # Play-button status to toggle between play and pause.
 
-        # Apply startup characteristics for window
+        # Apply startup characteristics for window.
         self.setWindowTitle("GFR Telemtry Data")
         self.setGeometry(0, 0, 1250, 750)
 
-        # centralWidget houses layout features within the app
+        # centralWidget houses layout features within the app.
         self.centralWidget = QtWidgets.QWidget(self)
         self.setCentralWidget(self.centralWidget)
 
-        # Section for adding toolbar sections and subsections
+        # Section for adding toolbar sections and subsections.
         self.build_toolbar()
 
-        # Sections for placing all layouts and widgets
+        # Sections for placing all layouts and widgets.
         self.place_widgets()
 
-        # holds instance up add tab popup so that it data
-        # is not cleaned up immediately upon close
+        # holds instance of add tab popup so that its data.
+        # is not cleaned up immediately upon close.
         self.popup = None
 
 
@@ -90,19 +91,19 @@ class main(QtWidgets.QMainWindow):
 
 
     def build_toolbar(self):
-        # Toolbar setup
-        self.statusBar() # Along bottom of screen
-        mainMenu = self.menuBar() # Along top of screen
+        # Toolbar setup.
+        self.statusBar() # Along bottom of screen.
+        mainMenu = self.menuBar() # Along top of screen.
 
-        # File drop down
+        # File drop down.
         fileMenu = mainMenu.addMenu("&File")
 
-        # File drop down option - exit
+        # File drop down option - exit.
         extractAction = QtGui.QAction("&Exit", self)
-        extractAction.setShortcut("Ctrl+Q") # Set key-board shortcut
+        extractAction.setShortcut("Ctrl+Q") # Set key-board shortcut.
         extractAction.setStatusTip("&Leave the App")
         extractAction.triggered.connect(self.close_application)
-        fileMenu.addAction(extractAction)  # add to file drop down
+        fileMenu.addAction(extractAction)  # add to file drop down.
 
         # View drop down
         # viewMenu = mainMenu.addMenu("&View")
@@ -119,61 +120,78 @@ class main(QtWidgets.QMainWindow):
 
         ################################### Format Main Window ####################################
 
-        # Create horizontal format for main widget subsections
+        # Create horizontal format for main widget subsections.
         self.horizontalSections = QtWidgets.QHBoxLayout()
         self.centralWidget.setLayout(self.horizontalSections)
         
         ################################ Main Window - Left Column ################################
 
-        # Left subsection - Virtical Stacking Layout
+        # Left subsection - Virtical Stacking Layout.
         self.left_vert_sec = QtWidgets.QVBoxLayout()
         self.horizontalSections.addLayout(self.left_vert_sec)
 
-        # Button - "Load dbc file"
+        # Button - "Load DBC file".
         self.upload_dbc_file = QtWidgets.QPushButton("Load DBC File")
-        self.upload_dbc_file.clicked.connect(self.load_dbc_file) # On click call member function load_dbc_file
+        self.upload_dbc_file.clicked.connect(self.load_dbc_file) # On click call member function load_dbc_file.
         self.left_vert_sec.addWidget(self.upload_dbc_file)
 
-        # Button - "Load MDF file"
+        # Button - "Load MDF file".
         self.upload_mdf_file = QtWidgets.QPushButton("Load MDF File")
         self.upload_mdf_file.setEnabled(False)
-        self.upload_mdf_file.clicked.connect(self.load_mdf_file) # On click call member function load_mdf_file
+        self.upload_mdf_file.clicked.connect(self.load_mdf_file) # On click call member function load_mdf_file.
         self.left_vert_sec.addWidget(self.upload_mdf_file)
 
-        #Channels - Checkbox list
+        #Channels - Checkbox list.
         self.channel_selectors = QtWidgets.QListWidget()
         self.channel_selectors.setFixedWidth(300)
-        self.channel_selectors.itemChanged.connect(self.check_event)
+        self.channel_selectors.itemChanged.connect(self.check_event) # When checkbox toggle call member function check_event.
         self.left_vert_sec.addWidget(self.channel_selectors)
 
-        # Button - "Plot channels"
+        # Button - "Plot channels".
         self.plot_channels = QtWidgets.QPushButton("Plot Channels")
         self.plot_channels.setEnabled(False)
-        self.plot_channels.clicked.connect(self.post_load_plots) # On click call member function load_plots
+        self.plot_channels.clicked.connect(self.post_load_plots) # On click call member function load_plots.
         self.left_vert_sec.addWidget(self.plot_channels)
 
         ############################### Main Window - Middle Column ###############################
 
-        # Middle subsection - Tabbed graphic data
+        # Middle subsection - Tabbed graphic data.
         self.tabs = QtWidgets.QTabWidget()
         self.horizontalSections.addWidget(self.tabs)
 
         ############################### Main Window - Right Column ################################
 
-        # Right subsection - Virtical Stacking Layout
+        # Right subsection - Virtical Stacking Layout.
         self.right_vert_sec = QtWidgets.QVBoxLayout()
         self.horizontalSections.addLayout(self.right_vert_sec)
 
-        # Horizontal Buttons layout - Back-skip, play, pause, forward-skip
-        self.play_horz_sec = QtWidgets.QVBoxLayout()
+        # Horizontal Buttons layout - Back-skip, play, pause, forward-skip.
+        self.play_horz_sec = QtWidgets.QHBoxLayout()
         self.right_vert_sec.addLayout(self.play_horz_sec)
-
-        # Button - "Play"
+   
+        # Button - "Track-Back".
+        self.back_button = QtWidgets.QPushButton()
+        self.back_button.setIcon(QtGui.QIcon("./images/rewind-button.png"))
+        #self.back_button.clicked.connect(self.play_pause_toggle) # On click call member function load_plots.
+        self.play_horz_sec.addWidget(self.back_button)
+    
+        # Button - "Play".
         self.play_button = QtWidgets.QPushButton()
         self.play_button.setIcon(QtGui.QIcon("./images/play-button.png"))
-        self.play_button.clicked.connect(self.play_pause_toggle) # On click call member function load_plots
+        self.play_button.clicked.connect(self.play_pause_toggle) # On click call member function load_plots.
         self.play_horz_sec.addWidget(self.play_button)
+     
+        # Button - "Track-Forward".
+        self.forward_button = QtWidgets.QPushButton()
+        self.forward_button.setIcon(QtGui.QIcon("./images/fast-forward-arrows.png"))
+        #self.forward_button.clicked.connect(self.play_pause_toggle) # On click call member function load_plots.
+        self.play_horz_sec.addWidget(self.forward_button)
 
+        # Slider - Time Sequence
+        self.play_slider = QtWidgets.QSlider(QtCore.Qt.Horizontal)
+        self.play_slider.setFixedWidth(300)
+        self.play_slider.valueChanged.connect(self.slider_moved) # On marker drag call member function slider_moved.
+        self.right_vert_sec.addWidget(self.play_slider)
 
     def close_application(self):
         print("Good-Bye!")
@@ -231,22 +249,43 @@ class main(QtWidgets.QMainWindow):
 
 
     def post_load_plots(self):
-        curr_tabs = [] # Temporary list of tabs already displayed to avoid reproducing on refresh.
+        displayed_tabs = [] # Temporary list of tabs already displayed to avoid reproducing on refresh.
 
-        # Iterate through tabs and if no longer on desired channel list them remove them else add to current tabs list.
+        # Iterate through tabs and if no longer on desired channel list then remove them else add to current tabs list.
         for i in reversed(range(self.tabs.count())):
-            tab_name = self.tabs.tabText(i)
+            tab_name = self.tabs.tabText(i) # Get name from QTab widget.
             if tab_name not in self.channel_list: 
-                self.tabs.removeTab(i) # Not present them delete.
+                self.tabs.removeTab(i) # Not present then remove tab and it's graph widget.
+                self.curr_tabs[:] = [x for x in self.curr_tabs if x.get_title() != tab_name] # Delete tab object.
             else:
-                curr_tabs.append(tab_name) # Present then add to current tabs temp list.
+                displayed_tabs.append(tab_name) # Present then add to already displayed tabs temp list.
 
         # If channel doesn't have a tab then create tab with graph.
         for ch in self.channel_list:
-            if ch not in curr_tabs:
+            if ch not in displayed_tabs:
                 obj_data = self.mdf_extracted.get(ch) # Get channel by specific name.
-                new_tab = Tab(ch, obj_data.timestamps, obj_data.samples) # Generate tab object using mdf channel name and time and data values.
+                new_tab = Tab(ch, obj_data.timestamps, obj_data.samples, self.play_slider) # Generate tab object.
+                self.curr_tabs.append(new_tab) # Add to list.
                 self.tabs.addTab(new_tab.get_tab_widget(), new_tab.get_title()) # Add tab to widget.
+
+        # Redraw slider's characteristics to new set of tabs and graphs.
+        self.redraw_slider()
+
+
+    def redraw_slider(self):
+        max_timestamp = 0
+        # Find the largest timestamp value to set slider range.
+        for tab_obj in self.curr_tabs:
+            if tab_obj.get_max_timestamp() > max_timestamp:
+                max_timestamp = tab_obj.get_max_timestamp()
+        self.play_slider.setRange(0, max_timestamp) # Redraw slider.
+
+
+    def slider_moved(self):
+        # Iterate over tab objects and change their display line location to match the slider's value.
+        for tab_obj in self.curr_tabs:
+            tab_obj.set_selected_x(self.play_slider.value())
+
 
     def play_pause_toggle(self):
         if self.play_status == False:

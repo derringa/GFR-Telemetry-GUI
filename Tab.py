@@ -10,12 +10,12 @@ from PyQt5 import QtWidgets
 
 class Tab:
 
-    def __init__(self, sensor_name, x_vals, y_vals):
+    def __init__(self, sensor_name, x_vals, y_vals, play_slider):
         # Tab data variables.
         self._x = x_vals # Applied to x-axis of pyqtplot.
         self._y = y_vals # Applied to y-axis of pyqtplot.
         self.title = sensor_name # Saved to apply as widget title in pyqt application.
-        self.selected_x = None
+        self.play_slider = play_slider
 
         # Declare pyqt widgets needed to build graphing tab.
         self.tab = QtWidgets.QWidget()
@@ -27,30 +27,27 @@ class Tab:
         self.tab.setLayout(self._layout)
 
         # Declare graph Features.
-        self._graph_line = pyqtgraph.InfiniteLine(movable=True, angle=90, label='x={value:0.2f}', 
+        self._graph.plotItem.vb.setLimits(xMin=self._x[0] - 1, xMax=self._x[-1] + 1)
+        self._graph_line = pyqtgraph.InfiniteLine(pos=self.play_slider.value(), movable=True, angle=90, label='x={value:0.2f}', 
                        labelOpts={'position':0.1, 'color': (200,200,100), 'fill': (200,200,200,50)})
         self._graph.addItem(self._graph_line)
-        self._graph.mouseReleaseEvent = self.line_change
+        self._graph_line.sigPositionChanged.connect(self.line_change)
 
         # Plot graph within the tab.
         self._plot = self._graph.plot(self._x, self._y)
 
     def line_change(self, event):
-        mousepoint = self._graph.plotItem.vb.mapDeviceToView(event.pos())
-        print(mousepoint.x() + 1)
-        print(self._graph_line.value())
-        self.selected_x = self._graph_line.value()
-
-    def graph_clicked(self, event):
-        mousepoint = self._graph.plotItem.vb.mapDeviceToView(event.pos())
-        #if mousepoint.x() == self._graph_line.value():
-        print(mousepoint.x())
-        print(self._graph_line.value())
-        #self._graph_line.setValue(mousepoint.x() - 7)
-        #self.selected_x = mousepoint.x()
+        val = self._graph_line.value()
+        self.play_slider.setValue(val)
 
     def get_selected_x(self):
-        return self.selected_x
+        return self._graph_line.value()
+
+    def set_selected_x(self, x):
+        self._graph_line.setValue(x)
+
+    def get_max_timestamp(self):
+        return self._x[-1]
 
     def get_tab_widget(self):
         return self.tab
@@ -64,4 +61,6 @@ class Tab:
     def __str__(self):
         return "A tab widget containing a graph. Data represents the {} channel.\nx-vals:\n{}\ny-vals:\n{}".format(self.title, self._x, self._y)
 
+    def __eq__(self, other):
+        return self.title == other.title
     
