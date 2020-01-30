@@ -1,13 +1,11 @@
 # GFR Telemetry GUI Changelog #
 ## Unfinished/Dysfunctional ##
-* Add click handlers to play and track buttons.
-* Improve checklist to show channel group name associated with each channel.
-  * In DBC the last string for each line beginning with BO_ is a channel group name.
-## Next tasks ##
 * Graph customization options including yyaxis, multiplot, custom x/time by y/time with interpolation.
+* Graph display options panel.
+
+## Next tasks ##
 * Confirm with team what channels are needed to get steering wheel (STA), accel (APPS1/APPS2) and brake (BrkPres_Front).
 * Find graphics for steering wheel to apply to main window.
-* Provide User graph display options.
 * Option to save and load current display preferences.
 
 ## Design Questions ##
@@ -60,3 +58,13 @@
 * Upon this change the slider function then updates all other graph line.
 ### Time-Synchronization ###
 * Now sliding any time tracking mechanisms keeps all others in track together.
+
+## 1/25/2020 ##
+### Asynchronous Play ###
+* Added Qthreading of track play incrementation allowing the GUI to receive other inputs.
+### Channel Navigation ###
+* Added collapsible channel group names for easer channel navigation.
+
+## 1/30/2020 ##
+### Graph Behavior ###
+* Locked vertical scrolling and max horizontal scrolling to largest range of plotted values.
