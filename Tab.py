@@ -1,5 +1,5 @@
 # Author:           Andrew Derringer
-# Last Modified:    1/22/2020
+# Last Modified:    1/31/2020
 # Description:      Tab class is build for pyqt5 to generate a tab object that is passed necessary information
 #                   to plot graph without standard behavior of creating another application window.
 
@@ -10,10 +10,12 @@ from PyQt5 import QtWidgets
 
 class Tab:
 
-    def __init__(self, sensor_name, x_vals, y_vals, play_slider):
+    def __init__(self, sensor_name, x_vals, y_vals, x_units, y_units, play_slider):
         # Tab data variables.
         self._x = x_vals # Applied to x-axis of pyqtplot.
         self._y = y_vals # Applied to y-axis of pyqtplot.
+        self._x_units = x_units
+        self._y_units = y_units
         self.title = sensor_name # Saved to apply as widget title in pyqt application.
         self.play_slider = play_slider # GUI timestamp slider referencable by each tab.
 
@@ -28,7 +30,11 @@ class Tab:
 
         # Declare graph Features.
         self._graph.plotItem.vb.setLimits(xMin=self._x[0] - 1, xMax=self._x[-1] + 1) # Set x value viewing limits in graph.
-        self._graph.plotItem.vb.setMouseEnabled(x=True, y=False)
+        self._graph.plotItem.vb.setMouseEnabled(x=True, y=False) # Restrict vertical scroll to max y range
+        self._graph.setLabel('left', self._y_units, color='white', size=30)
+        self._graph.setLabel('bottom', self._x_units, color='white', size=30)
+        x_axis = self._graph.plotItem.getAxis('bottom')
+        x_axis.setTickSpacing(60, 10) # 60 interval ticker for mintutes
         self._graph_line = pyqtgraph.InfiniteLine(pos=self.play_slider.value(), movable=True, angle=90, label='x={value:0.2f}', 
                        labelOpts={'position':0.1, 'color': (200,200,100), 'fill': (200,200,200,50)})
         self._graph.addItem(self._graph_line) # Add horizontal tracing line to graph.

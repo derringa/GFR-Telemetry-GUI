@@ -1,5 +1,5 @@
 # Author:           Andrew Derringer
-# Last Modified:    1/17/2020
+# Last Modified:    1/31/2020
 # Description:      PyQt5 application that generates customizable display of CAN data using MDF and DBC files.
 #                   This application was made using data and specifications from Oregon State Univesity Global
 #                   formula racing team.
@@ -8,12 +8,13 @@ from PyQt5 import QtWidgets, QtCore, QtGui
 from PyQt5.Qt import Qt
 from asammdf import MDF
 import numpy as np
-from numpy import sin, cos, pi
-from enum import Enum
+#from numpy import sin, cos, pi
+#from enum import Enum
 import sys
-import pyqtgraph
-from pyqtgraph import PlotWidget, plot
+#import pyqtgraph
+#from pyqtgraph import PlotWidget, plot
 from Tab import Tab
+from Pedal import Pedal
 from Worker import Worker
 import time
 import threading
@@ -195,8 +196,23 @@ class main(QtWidgets.QMainWindow):
         # Slider - Time Sequence
         self.play_slider = QtWidgets.QSlider(QtCore.Qt.Horizontal)
         self.play_slider.setFixedWidth(300)
+        self.play_slider.setRange(0, 0)
         self.play_slider.valueChanged.connect(self.slider_moved)
         self.right_vert_sec.addWidget(self.play_slider)
+
+        # Horizontal Pedals layout - Brake and Gas
+        self.pedal_horz_sec = QtWidgets.QHBoxLayout()
+        self.right_vert_sec.addLayout(self.pedal_horz_sec)
+
+        # Graphic - Brake Pedal
+        self.brake_pedal = Pedal(max_y=10000)
+        self.pedal_horz_sec.addWidget(self.brake_pedal)
+        self.brake_pedal.setMaximumSize(100, 100)
+
+        # Graphic - Gas Pedal
+        self.gas_pedal = Pedal(max_y=100)
+        self.pedal_horz_sec.addWidget(self.gas_pedal)
+        self.gas_pedal.setMaximumSize(100, 100)
 
 
     def close_application(self):
@@ -208,7 +224,7 @@ class main(QtWidgets.QMainWindow):
         # Get user selected MDF file path and make MDF object.
         mf4_path = QtWidgets.QFileDialog.getOpenFileName(self, 'Select file', 'c:\\', "MDF (*.mf4)")
         mdf_obj = MDF(mf4_path[0]) 
-        self.mdf_extracted = mdf_obj.extract_can_logging([self.dbc_path[0]]) # Extract data with dbc file path.
+        self.mdf_extracted = mdf_obj.extract_can_logging(self.dbc_path[0]) # Extract data with dbc file path.
 
         # Collect name of all channels from MDF into a list.
         for ch in self.mdf_extracted:
@@ -224,29 +240,33 @@ class main(QtWidgets.QMainWindow):
         for ch in delete_channels:
             parent = ch.parent()
             parent.removeChild(ch)
-            
+
         # Activate the Plot Channel button only after MDF file is loaded and operated on.
         self.plot_channels.setEnabled(True)
+        self.load_pedal_data()
 
 
     def load_dbc_file(self):
-        self.dbc_path = QtWidgets.QFileDialog.getOpenFileName(self, 'Select file', 'c:\\', "DBC (*.dbc)")
+        self.dbc_path = QtWidgets.QFileDialog.getOpenFileNames(self, 'Select file', 'c:\\', "DBC (*.dbc)")
 
         # Open file and add channel name to list under conditions.
-        with open(self.dbc_path[0], 'r') as fd:
-            group_dict = {}
-            curr_group = ''
-            for line in fd:
-                line_list = line.split(None, 5) # Grab first 5 space delimited strings.
-                if not line_list: # Disregard empty lines.
-                    continue
-                elif line_list[0] == 'BO_': # Grab channel group name.
-                    curr_group = line_list[4]
-                elif line_list[0] == 'SG_': # Grab channel names.
-                    if group_dict.get(curr_group) == None: # If channel group not present then add.
-                        group_dict[curr_group] = [line_list[1]]
-                    else: # Else append new channel to existing group.
-                        group_dict[curr_group].append(line_list[1])
+        for f in self.dbc_path[0]:
+            #with open(self.dbc_path[0], 'r') as fd:
+            with open(f, 'r') as fd:
+                group_dict = {}
+                curr_group = ''
+                for line in fd:
+                    line_list = line.split(None, 5) # Grab first 5 space delimited strings.
+                    if not line_list: # Disregard empty lines.
+                        continue
+                    elif line_list[0] == 'BO_': # Grab channel group name.
+                        curr_group = line_list[4]
+                    elif line_list[0] == 'SG_': # Grab channel names.
+                        if group_dict.get(curr_group) == None: # If channel group not present then add.
+                            group_dict[curr_group] = [line_list[1]]
+                        else: # Else append new channel to existing group.
+                            group_dict[curr_group].append(line_list[1])
+                fd.close()
 
             # Make tree widget items from dict.
             for (key, value) in group_dict.items():
@@ -256,16 +276,30 @@ class main(QtWidgets.QMainWindow):
                     child.setText(0, ch_name)
                     child.setCheckState(0, Qt.Unchecked)
 
-            fd.close()
-
         # Activate the Load MF4 File button only after DBC file is loaded and operated on.
         self.upload_mdf_file.setEnabled(True)
     
 
+    def load_pedal_data(self):
+        # After MDf loaded store brake and gas pedal data in class variables.
+        brake_channel = self.mdf_extracted.get("BrkPres_Front")
+        x = brake_channel.timestamps
+        y = brake_channel.samples
+        inter_x = list(range(0, int(x[-1]), 1))
+        self.brake_pressure = np.interp(inter_x, x, y) # Interpolate indices to match play slider values.
+
+        accel_channel = self.mdf_extracted.get("APPS1")
+        x = accel_channel.timestamps
+        y = accel_channel.samples
+        inter_x = list(range(0, int(x[-1]), 1))
+        self.accel_percent = np.interp(inter_x, x, y)
+        
+
     def check_event(self, item, column):
+        # If user uncheckes a box then remove from desired channel list.
         if item.checkState(column) == Qt.Unchecked:
             self.channel_list[:] = [ch for ch in self.channel_list if ch != item.text(0)]
-        else:
+        else: # Else checked and add to list.
             self.channel_list.append(item.text(0))
 
 
@@ -285,7 +319,7 @@ class main(QtWidgets.QMainWindow):
         for ch in self.channel_list:
             if ch not in displayed_tabs:
                 ch_obj = self.mdf_extracted.get(ch)
-                new_tab = Tab(ch, ch_obj.timestamps, ch_obj.samples, self.play_slider)
+                new_tab = Tab(ch, ch_obj.timestamps, ch_obj.samples, "seconds", ch_obj.unit, self.play_slider)
                 self.curr_tabs.append(new_tab)
                 self.tabs.addTab(new_tab.get_tab_widget(), new_tab.get_title())
 
@@ -302,10 +336,35 @@ class main(QtWidgets.QMainWindow):
         self.play_slider.setRange(0, max_timestamp) # Redraw slider.
 
 
+    def redraw_pedals(self):
+        
+        i = self.play_slider.value()
+
+        # Redraw brake_pedal.
+        if i >= len(self.brake_pressure): # If slider value exceeds index range, set to max index.
+            i = len(self.brake_pressure) - 1
+        pressure = int(self.brake_pressure[i])
+        if pressure > self.brake_pedal.get_max(): # If value exceeds graphic calculations set to max value.
+            pressure = self.brake_pedal.get_max()
+        self.brake_pedal.set_pressure(pressure) # Redraw.
+
+        # The same process applied to gas_pedal.
+        if i >= len(self.accel_percent):
+            i = len(self.accel_percent) - 1
+        pressure = int(self.accel_percent[i]) - 200
+        if pressure > self.gas_pedal.get_max():
+            pressure = self.gas_pedal.get_max()
+        self.gas_pedal.set_pressure(pressure)
+
+
     def slider_moved(self):
+        print(self.play_slider.value())
         # Iterate over tab objects and change their display line location to match the slider's value.
         for tab_obj in self.curr_tabs:
             tab_obj.set_selected_x(self.play_slider.value())
+
+        # Redraw pedals to match new slider timestamp.
+        self.redraw_pedals()
         
 
     def generate_play_thread(self):
