@@ -8,11 +8,7 @@ from PyQt5 import QtWidgets, QtCore, QtGui
 from PyQt5.Qt import Qt
 from asammdf import MDF
 import numpy as np
-#from numpy import sin, cos, pi
-#from enum import Enum
 import sys
-#import pyqtgraph
-#from pyqtgraph import PlotWidget, plot
 from Tab import Tab
 from Pedal import Pedal
 from Worker import Worker
@@ -73,7 +69,7 @@ class main(QtWidgets.QMainWindow):
         self.centralWidget = QtWidgets.QWidget(self)
         self.setCentralWidget(self.centralWidget)
 
-        # Section for adding toolbar sections and subsections.
+        # Section for adding toolbar drop-downs and subsections.
         self.build_toolbar()
 
         # Sections for placing all layouts and widgets.
@@ -111,14 +107,20 @@ class main(QtWidgets.QMainWindow):
         fileMenu.addAction(extractAction)  # add to file drop down.
 
         # View drop down
-        # viewMenu = mainMenu.addMenu("&View")
+        custMenu = mainMenu.addMenu("&Customize")
 
-        # View drop down option - add tab
-        # addTab = QtGui.QAction("&Add Tab", self)
-        # addTab.setShortcut("Ctrl+T")
-        # addTab.setStatusTip("&Add tab with custom graph display")
+        # Customize drop down option - Add Display
+        addDisplay = QtGui.QAction("&Add Display", self)
+        addDisplay.setShortcut("Ctrl+T")
+        addDisplay.setStatusTip("&Add Display with custom graph display")
+        # addDisplay.triggered.connect(self.tab_window)
+        custMenu.addAction(addDisplay) # add to view drop down
+
+        editDisplay = QtGui.QAction("&Edit Display", self)
+        editDisplay.setShortcut("Ctrl+E")
+        editDisplay.setStatusTip("&Edit graph output of a Display.")
         # addTab.triggered.connect(self.tab_window)
-        # viewMenu.addAction(addTab) # add to view drop down
+        custMenu.addAction(editDisplay) # add to view drop down
 
 
     def place_widgets(self):
@@ -146,12 +148,23 @@ class main(QtWidgets.QMainWindow):
         self.upload_mdf_file.clicked.connect(self.load_mdf_file)
         self.left_vert_sec.addWidget(self.upload_mdf_file)
 
-        #Channels - Checkbox list.
+        #Time Plot Channels - Checkbox list.
         self.channel_selectors = QtWidgets.QTreeWidget()
-        self.channel_selectors.setHeaderHidden(True)
+        #QtWidgets.QTreeWidget.setHeaderLabel()
+        self.channel_selectors.setHeaderLabel("Time Plots")
+        #self.channel_selectors.setHeaderHidden(True)
         self.channel_selectors.setFixedWidth(300)
         self.channel_selectors.itemChanged.connect(self.check_event)
         self.left_vert_sec.addWidget(self.channel_selectors)
+
+        #Time Plot Channels - Checkbox list.
+        self.custom_selectors = QtWidgets.QTreeWidget()
+        #QtWidgets.custom_selectors.setHeaderLabel()
+        self.channel_selectors.setHeaderLabel("Custom Plots")
+        #self.channel_selectors.setHeaderHidden(True)
+        self.custom_selectors.setFixedWidth(300)
+        self.custom_selectors.itemChanged.connect(self.check_event)
+        self.left_vert_sec.addWidget(self.custom_selectors)
 
         # Button - "Plot channels".
         self.plot_channels = QtWidgets.QPushButton("Plot Channels")
@@ -163,6 +176,9 @@ class main(QtWidgets.QMainWindow):
 
         # Middle subsection - Tabbed graphic data.
         self.tabs = QtWidgets.QTabWidget()
+        self.tabs.setMovable(True)
+        self.tabs.setTabsClosable(True)
+        self.tabs.tabCloseRequested.connect(self.close_tab)
         self.horizontalSections.addWidget(self.tabs)
 
         ############################### Main Window - Right Column ################################
@@ -319,7 +335,11 @@ class main(QtWidgets.QMainWindow):
         for ch in self.channel_list:
             if ch not in displayed_tabs:
                 ch_obj = self.mdf_extracted.get(ch)
-                new_tab = Tab(ch, ch_obj.timestamps, ch_obj.samples, "seconds", ch_obj.unit, self.play_slider)
+                new_tab = Tab('Test', self.play_slider)
+                # new_tab.add_plot()
+                new_tab.add_plot(ch, ch_obj.timestamps, ch_obj.samples, ch_obj.unit)
+                # new_tab = Tab(ch, ch_obj.timestamps, ch_obj.samples, "seconds", ch_obj.unit, self.play_slider)
+                new_tab.render_multiplot()
                 self.curr_tabs.append(new_tab)
                 self.tabs.addTab(new_tab.get_tab_widget(), new_tab.get_title())
 
@@ -411,6 +431,9 @@ class main(QtWidgets.QMainWindow):
         # Go forward 10 ticks.
         self.play_slider.setValue(self.play_slider.value() + 10)
 
+
+    def close_tab(self, i):
+        self.tabs.removeTab(i)
 
 if __name__ == "__main__":
     app = QtWidgets.QApplication(sys.argv)
