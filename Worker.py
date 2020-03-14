@@ -20,6 +20,7 @@ class Worker(QtCore.QThread):
             self.intReady.emit(1)
             time.sleep(1)
 
+
     def kill(self):
         # When called deactivate work method and wait for cleanup.
         self._active = False

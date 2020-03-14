@@ -4,61 +4,31 @@
 #                   This application was made using data and specifications from Oregon State Univesity Global
 #                   formula racing team.
 
+
 from PyQt5 import QtWidgets, QtCore, QtGui
 from PyQt5.Qt import Qt
 from asammdf import MDF
+
 import numpy as np
 import sys
-from Tab import Tab
-from Pedal import Pedal
-from Worker import Worker
 import time
 import threading
 
-
-# class popupWindow(QtWidgets.QMainWindow):
-
-#     main = None
-
-#     def __init__(self, parent=None):
-#         super(popupWindow, self).__init__(parent)
-
-#         self.setWindowTitle("Add New Tab")
-#         centralWidget = QtWidgets.QWidget()
-#         self.setCentralWidget(centralWidget)
-
-#         self.name = QtWidgets.QLineEdit()
-#         self.type = QtWidgets.QLineEdit()
-
-#         tabForm = QtWidgets.QFormLayout()
-#         tabForm.addRow(QtWidgets.QLabel("Name:"), self.name)
-#         tabForm.addRow(QtWidgets.QLabel("Type:"), self.type)
-
-#         submit = QtWidgets.QPushButton("Submit")
-#         submit.clicked.connect(self.generate_tab)
-
-#         cancel = QtWidgets.QPushButton("Cancel")
-#         cancel.clicked.connect(self.close)
-
-#         tabForm.addRow(submit, cancel)
-#         centralWidget.setLayout(tabForm)
-
-#     def generate_tab(self):
-#         newTab = Tab(self.name.text())
-#         self.main.tabList.append(newTab)
-#         print(newTab.title)
-#         self.main.add_tab(newTab)
-#         self.close()
-
+from Tab import Tab
+from Pedal import Pedal
+from Worker import Worker
+from PopupWindow import Popup
 
 
 class main(QtWidgets.QMainWindow):
     def __init__(self, parent=None):
         super(main, self).__init__(parent)
 
-        self.curr_tabs = [] # List of Tab class object currently present and displayed on GUI.
-        self.channel_list = [] # List of channel names desired by user on next plot update.
-        self.mdf_list = [] # List of available channels in MDF to crossreference with the DBC checklist.
+        self.group_dict = {}
+        self.tab_list = [] # List of Tab class object currently present and displayed on GUI.
+        # self.channel_list = [] # List of channel names desired by user on next plot update.
+        # self.mdf_list = [] # List of available channels in MDF to crossreference with the DBC checklist.
+        self.mdf_extracted = None
         self.play_status = False # Play-button status to toggle between play and pause.
 
         # Apply startup characteristics for window.
@@ -80,15 +50,10 @@ class main(QtWidgets.QMainWindow):
         self.popup = None
 
 
-    # def tab_window(self):
-    #     self.popup = popupWindow()
-    #     self.popup.main = self
-    #     self.popup.show()
-
-
-    # def add_tab(self, item):
-    #     #item.updateData(self.hour, self.temperature)
-    #     self.tabs.addTab(item.tab, item.title)
+    def open_popup(self):
+        self.popup = Popup(self.group_dict)
+        self.popup.main = self
+        self.popup.show()
 
 
     def build_toolbar(self):
@@ -137,6 +102,11 @@ class main(QtWidgets.QMainWindow):
         self.left_vert_sec = QtWidgets.QVBoxLayout()
         self.horizontalSections.addLayout(self.left_vert_sec)
 
+        # Button - "Add Tab".
+        self.add_tab = QtWidgets.QPushButton("Add Tab")
+        self.add_tab.clicked.connect(self.open_popup)
+        self.left_vert_sec.addWidget(self.add_tab)
+
         # Button - "Load DBC file".
         self.upload_dbc_file = QtWidgets.QPushButton("Load DBC File")
         self.upload_dbc_file.clicked.connect(self.load_dbc_file)
@@ -153,23 +123,14 @@ class main(QtWidgets.QMainWindow):
         #QtWidgets.QTreeWidget.setHeaderLabel()
         self.channel_selectors.setHeaderLabel("Time Plots")
         #self.channel_selectors.setHeaderHidden(True)
-        self.channel_selectors.setFixedWidth(300)
-        self.channel_selectors.itemChanged.connect(self.check_event)
+        self.channel_selectors.setFixedWidth(200)
+        # self.channel_selectors.itemChanged.connect(self.check_event)
         self.left_vert_sec.addWidget(self.channel_selectors)
-
-        #Time Plot Channels - Checkbox list.
-        self.custom_selectors = QtWidgets.QTreeWidget()
-        #QtWidgets.custom_selectors.setHeaderLabel()
-        self.channel_selectors.setHeaderLabel("Custom Plots")
-        #self.channel_selectors.setHeaderHidden(True)
-        self.custom_selectors.setFixedWidth(300)
-        self.custom_selectors.itemChanged.connect(self.check_event)
-        self.left_vert_sec.addWidget(self.custom_selectors)
 
         # Button - "Plot channels".
         self.plot_channels = QtWidgets.QPushButton("Plot Channels")
         self.plot_channels.setEnabled(False)
-        self.plot_channels.clicked.connect(self.post_load_plots)
+        self.plot_channels.clicked.connect(self.render_graphs)
         self.left_vert_sec.addWidget(self.plot_channels)
 
         ############################### Main Window - Middle Column ###############################
@@ -187,7 +148,7 @@ class main(QtWidgets.QMainWindow):
         self.right_vert_sec = QtWidgets.QVBoxLayout()
         self.horizontalSections.addLayout(self.right_vert_sec)
 
-        # Horizontal Buttons layout - Back-skip, play, pause, forward-skip.
+        # Horizontal track buttons layout - Back-skip, play, pause, forward-skip.
         self.play_horz_sec = QtWidgets.QHBoxLayout()
         self.right_vert_sec.addLayout(self.play_horz_sec)
    
@@ -242,20 +203,22 @@ class main(QtWidgets.QMainWindow):
         mdf_obj = MDF(mf4_path[0]) 
         self.mdf_extracted = mdf_obj.extract_can_logging(self.dbc_path[0]) # Extract data with dbc file path.
 
-        # Collect name of all channels from MDF into a list.
-        for ch in self.mdf_extracted:
-            self.mdf_list.append(ch.name)
+        # # Collect name of all channels from MDF into a list.
+        # for ch in self.mdf_extracted:
+        #     self.mdf_list.append(ch.name)
 
-        # Delete any channel listed in DBC not also present in MDF list.
-        delete_channels = []
-        itr = QtWidgets.QTreeWidgetItemIterator(self.channel_selectors)
-        while itr.value():
-            if itr.value().childCount() == 0 and itr.value().text(0) not in self.mdf_list:
-                delete_channels.append(itr.value())
-            itr += 1
-        for ch in delete_channels:
-            parent = ch.parent()
-            parent.removeChild(ch)
+        # # Delete any channel listed in DBC not also present in MDF list.
+        # delete_channels = []
+        # itr = QtWidgets.QTreeWidgetItemIterator(self.channel_selectors)
+        # while itr.value():
+        #     if itr.value().childCount() == 0 and itr.value().text(0) not in self.mdf_list:
+        #         delete_channels.append(itr.value())
+        #     itr += 1
+        # for ch in delete_channels:
+        #     parent = ch.parent()
+        #     parent.removeChild(ch)
+
+        self.render_graphs()
 
         # Activate the Plot Channel button only after MDF file is loaded and operated on.
         self.plot_channels.setEnabled(True)
@@ -269,7 +232,7 @@ class main(QtWidgets.QMainWindow):
         for f in self.dbc_path[0]:
             #with open(self.dbc_path[0], 'r') as fd:
             with open(f, 'r') as fd:
-                group_dict = {}
+                self.group_dict = {}
                 curr_group = ''
                 for line in fd:
                     line_list = line.split(None, 5) # Grab first 5 space delimited strings.
@@ -278,19 +241,19 @@ class main(QtWidgets.QMainWindow):
                     elif line_list[0] == 'BO_': # Grab channel group name.
                         curr_group = line_list[4]
                     elif line_list[0] == 'SG_': # Grab channel names.
-                        if group_dict.get(curr_group) == None: # If channel group not present then add.
-                            group_dict[curr_group] = [line_list[1]]
+                        if self.group_dict.get(curr_group) == None: # If channel group not present then add.
+                            self.group_dict[curr_group] = [line_list[1]]
                         else: # Else append new channel to existing group.
-                            group_dict[curr_group].append(line_list[1])
+                            self.group_dict[curr_group].append(line_list[1])
                 fd.close()
 
             # Make tree widget items from dict.
-            for (key, value) in group_dict.items():
+            for (key, value) in self.group_dict.items():
                 parent = QtWidgets.QTreeWidgetItem(self.channel_selectors, [key])
                 for ch_name in value:
                     child = QtWidgets.QTreeWidgetItem(parent)
                     child.setText(0, ch_name)
-                    child.setCheckState(0, Qt.Unchecked)
+                    # child.setCheckState(0, Qt.Unchecked)
 
         # Activate the Load MF4 File button only after DBC file is loaded and operated on.
         self.upload_mdf_file.setEnabled(True)
@@ -311,46 +274,68 @@ class main(QtWidgets.QMainWindow):
         self.accel_percent = np.interp(inter_x, x, y)
         
 
-    def check_event(self, item, column):
-        # If user uncheckes a box then remove from desired channel list.
-        if item.checkState(column) == Qt.Unchecked:
-            self.channel_list[:] = [ch for ch in self.channel_list if ch != item.text(0)]
-        else: # Else checked and add to list.
-            self.channel_list.append(item.text(0))
+    # def check_event(self, item, column):
+    #     # If user uncheckes a box then remove from desired channel list.
+    #     if item.checkState(column) == Qt.Unchecked:
+    #         self.channel_list[:] = [ch for ch in self.channel_list if ch != item.text(0)]
+    #     else: # Else checked and add to list.
+    #         self.channel_list.append(item.text(0))
 
 
-    def post_load_plots(self):
-        displayed_tabs = []
+    def render_graphs(self):
+        if self.mdf_extracted != None:
+            tab_count = self.tabs.count()
+            new_tabs = []
+            for tab_obj in self.tab_list:
+                newTab = Tab(tab_obj.get_title(), self.play_slider)
+                for plot_name in tab_obj.get_plots():
+                    try:
+                        mdf_obj = self.mdf_extracted.get(plot_name)
+                        if mdf_obj is not None:
+                            newTab.add_plot(plot_name, mdf_obj.timestamps, mdf_obj.samples, mdf_obj.unit)
+                    except Exception:
+                        newTab.add_plot(plot_name)
+                self.tabs.addTab(newTab.get_tab_widget(), newTab.get_title())
+                new_tabs.append(newTab)
+                newTab.render_multiplot()
 
-        # Iterate through tabs and if no longer on desired channel list then remove them else add to current tabs list.
-        for i in reversed(range(self.tabs.count())):
-            tab_name = self.tabs.tabText(i)
-            if tab_name not in self.channel_list: # If not present then remove tab and it's graph widget.
-                self.tabs.removeTab(i) 
-                self.curr_tabs[:] = [x for x in self.curr_tabs if x.get_title() != tab_name]
-            else: # Else add to already displayed_tabs list.
-                displayed_tabs.append(tab_name)
+            self.redraw_slider()
+            self.tab_list.clear()
+            self.tab_list = new_tabs
+            for i in reversed(range(tab_count)):
+                self.tabs.removeTab(i)
 
-        # If channel doesn't have a tab then create tab with graph.
-        for ch in self.channel_list:
-            if ch not in displayed_tabs:
-                ch_obj = self.mdf_extracted.get(ch)
-                new_tab = Tab('Test', self.play_slider)
-                # new_tab.add_plot()
-                new_tab.add_plot(ch, ch_obj.timestamps, ch_obj.samples, ch_obj.unit)
-                # new_tab = Tab(ch, ch_obj.timestamps, ch_obj.samples, "seconds", ch_obj.unit, self.play_slider)
-                new_tab.render_multiplot()
-                self.curr_tabs.append(new_tab)
-                self.tabs.addTab(new_tab.get_tab_widget(), new_tab.get_title())
+        # displayed_tabs = []
+
+        # # Iterate through tabs and if no longer on desired channel list then remove them else add to current tabs list.
+        # for i in reversed(range(self.tabs.count())):
+        #     tab_name = self.tabs.tabText(i)
+        #     if tab_name not in self.channel_list: # If not present then remove tab and it's graph widget.
+        #         self.tabs.removeTab(i) 
+        #         self.tab_list[:] = [x for x in self.tab_list if x.get_title() != tab_name]
+        #     else: # Else add to already displayed_tabs list.
+        #         displayed_tabs.append(tab_name)
+
+        # # If channel doesn't have a tab then create tab with graph.
+        # for ch in self.channel_list:
+        #     if ch not in displayed_tabs:
+        #         ch_obj = self.mdf_extracted.get(ch)
+        #         new_tab = Tab('Test', self.play_slider)
+        #         # new_tab.add_plot(ch, ch_obj.timestamps, ch_obj.samples, ch_obj.unit)
+        #         new_tab.add_plot(ch)
+        #         # new_tab = Tab(ch, ch_obj.timestamps, ch_obj.samples, "seconds", ch_obj.unit, self.play_slider)
+        #         new_tab.render_multiplot()
+        #         self.tab_list.append(new_tab)
+        #         self.tabs.addTab(new_tab.get_tab_widget(), new_tab.get_title())
 
         # Redraw slider's characteristics to new set of tabs and graphs.
-        self.redraw_slider()
+        # self.redraw_slider()
 
 
     def redraw_slider(self):
         max_timestamp = 0
         # Find the largest timestamp value to set slider range.
-        for tab_obj in self.curr_tabs:
+        for tab_obj in self.tab_list:
             if tab_obj.get_max_timestamp() > max_timestamp:
                 max_timestamp = tab_obj.get_max_timestamp()
         self.play_slider.setRange(0, max_timestamp) # Redraw slider.
@@ -380,7 +365,7 @@ class main(QtWidgets.QMainWindow):
     def slider_moved(self):
         print(self.play_slider.value())
         # Iterate over tab objects and change their display line location to match the slider's value.
-        for tab_obj in self.curr_tabs:
+        for tab_obj in self.tab_list:
             tab_obj.set_selected_x(self.play_slider.value())
 
         # Redraw pedals to match new slider timestamp.
@@ -433,7 +418,13 @@ class main(QtWidgets.QMainWindow):
 
 
     def close_tab(self, i):
+        self.tab_list.remove(i)
         self.tabs.removeTab(i)
+
+
+    def update_plots(self):
+        print("COOL!")
+
 
 if __name__ == "__main__":
     app = QtWidgets.QApplication(sys.argv)
