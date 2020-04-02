@@ -1,17 +1,18 @@
 # GFR Telemetry GUI Changelog #
 ## Unfinished/Dysfunctional ##
-* Graph customization options including yyaxis, multiplot, custom x/time by y/time with interpolation.
-* Graph display options panel.
 
-## Next tasks ##
-* Confirm with team what channels are needed to get steering wheel (STA), accel (APPS1/APPS2) and brake (BrkPres_Front).
-* Find graphics for steering wheel to apply to main window.
-* Option to save and load current display preferences.
+## Tasks (By Priority) ##
+* Find graphics for steering wheel to apply to main window, rotate paint event on time change.
+* Track minimap using GPS data.
+* Convert unit measurements for data being displayed.
+* Customize plot line colors.
+* Drag and drop signals from main window list into graphs.
 
 ## Design Questions ##
 * Do we want to display yaw, roll, pitch, acceleration in x/y/z etc. visually?
-* Develope a track view. Do we need GPS for this? Can we extrapolate from other data? (AHRS channels)
+* GPS data not extrapolating as expected. Needed to develop track visualization.
 * If track can be displayed, how are we designating a starting location and determining lap time?
+* Previous DBC files did not specify group in provided field but in comment. Had to program to tokenize comment string. Change future DBC files?
 
 ## 11/21/2019 ##
 * First design on main window layout.
@@ -68,3 +69,27 @@
 ## 1/30/2020 ##
 ### Graph Behavior ###
 * Locked vertical scrolling and max horizontal scrolling to largest range of plotted values.
+
+## 3/10/2020 ##
+### Custom Graphs ###
+* Popup window to generate multiplot graph in tab widget.
+* Custom title and plot data available.
+* Plot generation asyncronous with data import. Prepare workspace before upload.
+
+## 3/26/2020 ##
+### Signal Management ###
+* Redesign signal data structure to account for group name and place in dict.
+* Reconfigure main window and popup to work with new dict format.
+
+## 3/28/2020 ##
+### Save/Load Workspace ###
+* Save current configuration of tabs in a JSON file.
+* Load JSON file and generate tabs asyncrounously with data import.
+
+## 4/1/2020 ##
+### Edit Workspace ###
+* Previously developed add tab popup now populates with current selected tab graph data to be edited.
+### Import Data ###
+* Popup window for mdf and dbc file select generated. Validated and passed to main window.
+### Toolbar ###
+* Import data and managing tabs moved primarily to toolbar dropdown selections. Buttons removed.

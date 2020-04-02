@@ -1,9 +1,8 @@
 # Author:           Andrew Derringer
-# Last Modified:    1/31/2020
+# Last Modified:    3/28/2020
 # Description:      Tab class is build for pyqt5 to generate a tab object that is passed necessary information
 #                   to plot graph without standard behavior of creating another application window.
 
-import itertools
 import numpy
 import pyqtgraph
 from PyQt5 import QtWidgets
@@ -13,7 +12,7 @@ class Tab:
 
     def __init__(self, title, play_slider, x_units='seconds'):
         # Tab data variables.
-        self._plots = {}
+        self._plots = []
         self._x = []
         self._x_units = x_units
         self.tab_title = title
@@ -32,33 +31,18 @@ class Tab:
 
     def interpolate_plots(self):
         # Check all timestamps in case that matching current _x was removed.
-        for key, value in self._plots.items():
+        for plot in self._plots:
             if len(self._x) == 0:
-                self._x = value['x_vals']
-            elif len(value['x_vals']) < len(self._x) and len(value['x_vals']) != 0:
-                self._x = value['x_vals']
+                self._x = plot['x_vals']
+            elif len(plot['x_vals']) < len(self._x) and len(plot['x_vals']) != 0:
+                self._x = plot['x_vals']
 
         # After _x reassigned interpolate all signals by new _x.
-        for key, value in self._plots.items():
-            if len(value['y_vals']) == 0:
-                value['inter_y_vals'] = value['y_vals']
+        for plot in self._plots:
+            if len(plot['y_vals']) == 0:
+                plot['inter_y_vals'] = plot['y_vals']
             else:
-                value['inter_y_vals'] = numpy.interp(self._x, value['x_vals'], value['y_vals'])
-
-
-    def clear_plots(self):
-        # Use stored plot and axis items to remove children items from main ViewBox.
-        for key, value in self._plots.items():
-            if value['plotAxis'] != None: 
-                self._graph.plotItem.scene().removeItem(value['plotAxis'])
-                self._graph.plotItem.layout.removeItem(value['plotAxis'])
-                value['plotAxis'] = None
-            if value['plotItem'] != None: 
-                self._graph.plotItem.scene().removeItem(value['plotItem'])
-                value['plotItem'] = None
-            if value['color'] != None: 
-                self._colors.append(value['color'])
-                value['color'] = None
+                plot['inter_y_vals'] = numpy.interp(self._x, plot['x_vals'], plot['y_vals'])
 
 
     def render_stackplot(self):
@@ -101,7 +85,7 @@ class Tab:
         plot_layout = self._graph.plotItem
         plot_layout.scene().removeItem(plot_layout.getAxis('left'))
 
-        for key, value in self._plots.items():
+        for plot_data in self._plots:
             plot = pyqtgraph.ViewBox()
             plot_color = self._colors.pop()
 
@@ -109,26 +93,26 @@ class Tab:
             if axis_count == 2:
                 plot_layout.showAxis('right')
                 plot_layout.getAxis('right').linkToView(plot)
-                plot_layout.getAxis('right').setLabel(text=key, units=value['y_units'], **{'font-size': '12pt'})
+                plot_layout.getAxis('right').setLabel(text=plot_data['signal'], units=plot_data['y_units'], **{'font-size': '12pt'})
                 plot_layout.getAxis('right').setPen(pyqtgraph.mkPen(color=plot_color))
-                value['plotAxis'] = plot_layout.getAxis('right') # Save in dict for easy object access.
+                plot_data['plotAxis'] = plot_layout.getAxis('right') # Save in dict for easy object access.
             # All subsequent plots.
             else:
                 axis = pyqtgraph.AxisItem('right')
                 plot_layout.layout.addItem(axis, 2, axis_count)
                 axis.linkToView(plot)
-                axis.setLabel(text=key, units=value['y_units'], **{'font-size': '12pt'})
+                axis.setLabel(text=plot_data['signal'], units=plot_data['y_units'], **{'font-size': '12pt'})
                 axis.setPen(pyqtgraph.mkPen(color=plot_color))
-                value['plotAxis'] = axis # Save in dict for easy object access.
+                plot_data['plotAxis'] = axis # Save in dict for easy object access.
             
-            value['plotItem'] = plot # Save in dict for easy object access.
-            value['color'] = plot_color
+            plot_data['plotItem'] = plot # Save in dict for easy object access.
+            plot_data['color'] = plot_color
 
             # Link plot to main x-axis and and plot data.
             plot_layout.scene().addItem(plot)
             plot.setXLink(plot_layout)
-            if len(self._x) == len(value['inter_y_vals']):
-                plot.addItem(pyqtgraph.PlotCurveItem(self._x, value['inter_y_vals'], pen=plot_color))
+            if len(self._x) == len(plot_data['inter_y_vals']):
+                plot.addItem(pyqtgraph.PlotCurveItem(self._x, plot_data['inter_y_vals'], pen=plot_color))
             plot.setMouseEnabled(x=True, y=False)
             axis_count += 1
 
@@ -139,21 +123,24 @@ class Tab:
 
     def updateViews(self):
         # On resizing event rescale plots to main ViewBox geometry.
-        for key, value in self._plots.items():
-            if value['plotItem'] != None:
-                plot = value['plotItem']
+        for plot in self._plots:
+            if plot['plotItem'] != None:
+                plot = plot['plotItem']
                 plot.setGeometry(self._graph.plotItem.vb.sceneBoundingRect())
                 plot.linkedViewChanged(self._graph.plotItem.vb, plot.XAxis)
 
 
     def get_plots(self):
-        for key, value in self._plots.items():
-            yield key
+        # Provide group and signal for each signal being plotted.
+        for plot in self._plots:
+            yield (plot['group'], plot['signal'])
 
 
-    def add_plot(self, title, timestamps=None, samples=None, units=None):
+    def add_plot(self, group, signal, timestamps=None, samples=None, units=None):
         # Add or update signal to be displayed
-        self._plots[title] = {
+        plot_dict = {
+            'group': group,
+            'signal': signal,
             'x_vals': timestamps,
             'y_vals': samples,
             'inter_y_vals': None,
@@ -163,27 +150,18 @@ class Tab:
             'color': None
         }
 
-        if self._plots[title]['x_vals'] is None and self._plots[title]['y_vals'] is None:
-            self._plots[title]['x_vals'] = []
-            self._plots[title]['y_vals'] = []
+        if plot_dict['x_vals'] is None and plot_dict['y_vals'] is None:
+            plot_dict['x_vals'] = []
+            plot_dict['y_vals'] = []
 
-        #print("Add Plot:\nTitle = {}\ntimestamps = {}\nsamples = {}\nunites = {}\ninter_samples = {}".format(title, self._plots[title]['x_vals'], self._plots[title]['y_vals'], self._plots[title]['y_units'], self._plots[title]['inter_y_vals']))
-
-
-    def add_plots(self, plot_list):
-        for title in plot_list:
-            self.add_plot(title)
+        self._plots.append(plot_dict)
 
 
-    def remove_plot(self, title):
-        # Remove signal from plot list if present.
-        value = self._plots[title]
-
-        if value['plotItem'] != None: self._graph.plotItem.scene().removeItem(value['plotItem'])
-        if value['plotAxis'] != None: self._graph.plotItem.scene().removeItem(value['plotAxis'])
-        if value['color'] != None: self._colors.append(value['color'])
-        
-        self._plots.pop(title, None)
+    def add_plots(self, plot_dict):
+        # Receive batch of plots to be added and pass each to add_plot.
+        for group, signal_list in plot_dict.items():
+            for signal in signal_list:
+                self.add_plot(group, signal)
 
 
     def line_change(self, event):
@@ -200,7 +178,8 @@ class Tab:
 
 
     def get_max_timestamp(self):
-        if len(self._x) != 0: return self._x[-1] # Return the largest x-value along the x-axis for GUI slider scaling.
+        if len(self._x) != 0: 
+            return self._x[-1] # Return the largest x-value along the x-axis for GUI slider scaling.
         return 0
 
 
@@ -211,21 +190,3 @@ class Tab:
     def get_title(self):
         return self.tab_title
 
-
-    def __repr__(self):
-        return "Tab({})".format(self.tab_title)
-
-
-    # def __str__(self):
-    #     return "A tab widget containing a graph. Data represents the {} channel.\nx-vals:\n{}\ny-vals:\n{}".format(self.tab_title, self._x, self._y)
-
-
-    # def __eq__(self, other):
-    #     if self.tab_title != other.tab_title:
-    #         return False
-
-    #     if cmp(self._plots, other._plots) != 0:
-    #         return False
-        
-    #     return True
-    

@@ -1,94 +1,140 @@
 # Author:           Andrew Derringer
-# Last Modified:    1/31/2020
+# Last Modified:    4/2/2020
 # Description:      PyQt5 application that generates customizable display of CAN data using MDF and DBC files.
 #                   This application was made using data and specifications from Oregon State Univesity Global
 #                   formula racing team.
 
 
 from PyQt5 import QtWidgets, QtCore, QtGui
-from PyQt5.Qt import Qt
 from asammdf import MDF
 
 import numpy as np
+import os
 import sys
 import time
 import threading
+import json
 
 from Tab import Tab
 from Pedal import Pedal
 from Worker import Worker
-from PopupWindow import Popup
+from LayoutPopup import LayoutPopup
+from ImportPopup import ImportPopup
+from CustomTree import CustomTree
 
 
 class main(QtWidgets.QMainWindow):
+
     def __init__(self, parent=None):
         super(main, self).__init__(parent)
 
-        self.group_dict = {}
-        self.tab_list = [] # List of Tab class object currently present and displayed on GUI.
-        # self.channel_list = [] # List of channel names desired by user on next plot update.
-        # self.mdf_list = [] # List of available channels in MDF to crossreference with the DBC checklist.
+        self.channel_dict = {} # Dict of signals navigable by [group name][signal name]
+        self.tab_list = [] # List of Tab class object currently displayed on GUI.
         self.mdf_extracted = None
         self.play_status = False # Play-button status to toggle between play and pause.
+
+        self.dbc_path = ""
+        self.mdf_path = ""
 
         # Apply startup characteristics for window.
         self.setWindowTitle("GFR Telemtry Data")
         self.setGeometry(0, 0, 1250, 750)
 
-        # centralWidget houses layout features within the app.
+        # CentralWidget houses layout features within the app.
         self.centralWidget = QtWidgets.QWidget(self)
         self.setCentralWidget(self.centralWidget)
 
         # Section for adding toolbar drop-downs and subsections.
-        self.build_toolbar()
+        self.buildToolbar()
 
         # Sections for placing all layouts and widgets.
-        self.place_widgets()
+        self.placeWidgets()
 
-        # holds instance of add tab popup so that its data.
-        # is not cleaned up immediately upon close.
+        # Holds instance of add tab popup.
         self.popup = None
 
 
-    def open_popup(self):
-        self.popup = Popup(self.group_dict)
+    def popupTabLayout(self, prev_state=None, edit=None):
+        # On "Add Tab" select generate Popup class object in seperate window. 
+        self.popup = LayoutPopup(self.channel_dict, edit=edit)
+        self.popup.main = self
+
+        if type(prev_state) == Tab:
+            self.popup.setTitle(prev_state.get_title())
+            for plot in prev_state.get_plots():
+                self.popup.addSignal(plot[0], plot[1])
+        self.popup.show()
+
+
+    def popupFileImport(self):
+        self.popup = ImportPopup(self.dbc_path, self.mdf_path)
         self.popup.main = self
         self.popup.show()
 
 
-    def build_toolbar(self):
+    def buildToolbar(self):
         # Toolbar setup.
-        self.statusBar() # Along bottom of screen.
-        mainMenu = self.menuBar() # Along top of screen.
+        tool_bar = self.menuBar() # Along top of screen.
 
-        # File drop down.
-        fileMenu = mainMenu.addMenu("&File")
+        ##################################### File DropDown #######################################
+
+        file_menu = tool_bar.addMenu("&File")
+
+        # File drop down option - Import Data.
+        import_data = QtGui.QAction("&Import Data", self)
+        import_data.setShortcut("Ctrl+D")
+        import_data.setStatusTip("Load mdf file and extract using dbc.")
+        import_data.triggered.connect(self.popupFileImport)
+        file_menu.addAction(import_data)
+
+        # File drop down option - Load Workspace.
+        load_workspace = QtGui.QAction("&Load Workspace", self)
+        load_workspace.setShortcut("Ctrl+W")
+        load_workspace.setStatusTip("Load tab and graph setting from previous session.")
+        load_workspace.triggered.connect(self.LoadWorkspace)
+        file_menu.addAction(load_workspace)
+
+        # File drop down option - Save Workspace.
+        save_workspace = QtGui.QAction("&Save Workspace", self)
+        save_workspace.setShortcut("Ctrl+S")
+        save_workspace.setStatusTip("Save tab and graph setting for later use.")
+        save_workspace.triggered.connect(self.saveWorkspace)
+        file_menu.addAction(save_workspace)
 
         # File drop down option - exit.
-        extractAction = QtGui.QAction("&Exit", self)
-        extractAction.setShortcut("Ctrl+Q") # Set key-board shortcut.
-        extractAction.setStatusTip("&Leave the App")
-        extractAction.triggered.connect(self.close_application)
-        fileMenu.addAction(extractAction)  # add to file drop down.
+        exit_gui = QtGui.QAction("&Exit", self)
+        exit_gui.setShortcut("Ctrl+Q")
+        exit_gui.setStatusTip("&Leave the App")
+        exit_gui.triggered.connect(self.closeApp)
+        file_menu.addAction(exit_gui) 
 
-        # View drop down
-        custMenu = mainMenu.addMenu("&Customize")
+        #################################### Layout DropDown ######################################
 
-        # Customize drop down option - Add Display
-        addDisplay = QtGui.QAction("&Add Display", self)
-        addDisplay.setShortcut("Ctrl+T")
-        addDisplay.setStatusTip("&Add Display with custom graph display")
-        # addDisplay.triggered.connect(self.tab_window)
-        custMenu.addAction(addDisplay) # add to view drop down
+        layout_menu = tool_bar.addMenu("&Layout")
 
-        editDisplay = QtGui.QAction("&Edit Display", self)
-        editDisplay.setShortcut("Ctrl+E")
-        editDisplay.setStatusTip("&Edit graph output of a Display.")
-        # addTab.triggered.connect(self.tab_window)
-        custMenu.addAction(editDisplay) # add to view drop down
+        # Layout drop down option - Add Display.
+        add_tab = QtGui.QAction("&Add Display", self)
+        add_tab.setShortcut("Ctrl+A")
+        add_tab.setStatusTip("&Add tab with custom display")
+        add_tab.triggered.connect(self.popupTabLayout)
+        layout_menu.addAction(add_tab)
+
+        # Layout drop down option - Edit Display.
+        edit_tab = QtGui.QAction("&Edit Display", self)
+        edit_tab.setShortcut("Ctrl+E")
+        edit_tab.setStatusTip("&Edit selected tab Display.")
+        edit_tab.triggered.connect(self.edit_display)
+        layout_menu.addAction(edit_tab)
+
+        # Layout drop down option - Remove Display.
+        remove_tab = QtGui.QAction("&Remove Display", self)
+        remove_tab.setShortcut("Ctrl+R")
+        remove_tab.setStatusTip("&Remove Tab.")
+        remove_tab.triggered.connect(self.close_display)
+        layout_menu.addAction(remove_tab)
 
 
-    def place_widgets(self):
+    def placeWidgets(self):
 
         ################################### Format Main Window ####################################
 
@@ -104,34 +150,22 @@ class main(QtWidgets.QMainWindow):
 
         # Button - "Add Tab".
         self.add_tab = QtWidgets.QPushButton("Add Tab")
-        self.add_tab.clicked.connect(self.open_popup)
+        self.add_tab.clicked.connect(self.popupTabLayout)
         self.left_vert_sec.addWidget(self.add_tab)
 
-        # Button - "Load DBC file".
-        self.upload_dbc_file = QtWidgets.QPushButton("Load DBC File")
-        self.upload_dbc_file.clicked.connect(self.load_dbc_file)
-        self.left_vert_sec.addWidget(self.upload_dbc_file)
+        # Button - "Import Data".
+        import_data = QtWidgets.QPushButton("Import Data")
+        import_data.clicked.connect(self.popupFileImport)
+        self.left_vert_sec.addWidget(import_data)
 
-        # Button - "Load MDF file".
-        self.upload_mdf_file = QtWidgets.QPushButton("Load MDF File")
-        self.upload_mdf_file.setEnabled(False)
-        self.upload_mdf_file.clicked.connect(self.load_mdf_file)
-        self.left_vert_sec.addWidget(self.upload_mdf_file)
-
-        #Time Plot Channels - Checkbox list.
+        # Collapsible Lists - Signals.
         self.channel_selectors = QtWidgets.QTreeWidget()
-        #QtWidgets.QTreeWidget.setHeaderLabel()
-        self.channel_selectors.setHeaderLabel("Time Plots")
-        #self.channel_selectors.setHeaderHidden(True)
+        # self.channel_selectors = CustomTree()
+        # self.channel_selectors.setDragEnabled(True)
+        # self.channel_selectors.setHeaderLabel("CAN Data")
+        self.channel_selectors.setHeaderHidden(True)
         self.channel_selectors.setFixedWidth(200)
-        # self.channel_selectors.itemChanged.connect(self.check_event)
         self.left_vert_sec.addWidget(self.channel_selectors)
-
-        # Button - "Plot channels".
-        self.plot_channels = QtWidgets.QPushButton("Plot Channels")
-        self.plot_channels.setEnabled(False)
-        self.plot_channels.clicked.connect(self.render_graphs)
-        self.left_vert_sec.addWidget(self.plot_channels)
 
         ############################### Main Window - Middle Column ###############################
 
@@ -192,144 +226,87 @@ class main(QtWidgets.QMainWindow):
         self.gas_pedal.setMaximumSize(100, 100)
 
 
-    def close_application(self):
-        print("Good-Bye!")
+    def closeApp(self):
+        # On "File Dropdown - Exit" select exit program.
         sys.exit()
 
 
-    def load_mdf_file(self):
-        # Get user selected MDF file path and make MDF object.
-        mf4_path = QtWidgets.QFileDialog.getOpenFileName(self, 'Select file', 'c:\\', "MDF (*.mf4)")
-        mdf_obj = MDF(mf4_path[0]) 
-        self.mdf_extracted = mdf_obj.extract_can_logging(self.dbc_path[0]) # Extract data with dbc file path.
+    def setDataFiles(self, dbc="", mdf=""):
+        self.dbc_path = dbc
+        self.mdf_path = mdf
 
-        # # Collect name of all channels from MDF into a list.
-        # for ch in self.mdf_extracted:
-        #     self.mdf_list.append(ch.name)
 
-        # # Delete any channel listed in DBC not also present in MDF list.
-        # delete_channels = []
-        # itr = QtWidgets.QTreeWidgetItemIterator(self.channel_selectors)
-        # while itr.value():
-        #     if itr.value().childCount() == 0 and itr.value().text(0) not in self.mdf_list:
-        #         delete_channels.append(itr.value())
-        #     itr += 1
-        # for ch in delete_channels:
-        #     parent = ch.parent()
-        #     parent.removeChild(ch)
+    def extractMDF(self):
+        # Get user selected MDF file path and make extracted MDF object.
+        mdf_obj = MDF(self.mdf_path) 
+        self.mdf_extracted = mdf_obj.extract_can_logging([self.dbc_path])
 
+        # Group names only exist in comment formatted as CAN#.group.signal.
+        # Populate channel_dict by channel_dict[group] = [{signal: signal_object}, ...]
+        for sig in self.mdf_extracted.iter_channels():
+            for word in sig.comment.split():
+                if word[0] != '<':
+                    s = word.split(".")
+                    if s[1] not in self.channel_dict:
+                        self.channel_dict[s[1]] = {s[2]: sig}
+                    else:
+                        self.channel_dict[s[1]][s[2]] = sig
+        
+        # Populate tree widget with groups and signals.
+        for group, signals in self.channel_dict.items():
+            parent = QtWidgets.QTreeWidgetItem(self.channel_selectors, [group])
+            for sig in signals:
+                child = QtWidgets.QTreeWidgetItem(parent)
+                child.setText(0, sig)
+
+        # Render any graphs already present and grab data for pedals.
         self.render_graphs()
-
-        # Activate the Plot Channel button only after MDF file is loaded and operated on.
-        self.plot_channels.setEnabled(True)
         self.load_pedal_data()
-
-
-    def load_dbc_file(self):
-        self.dbc_path = QtWidgets.QFileDialog.getOpenFileNames(self, 'Select file', 'c:\\', "DBC (*.dbc)")
-
-        # Open file and add channel name to list under conditions.
-        for f in self.dbc_path[0]:
-            #with open(self.dbc_path[0], 'r') as fd:
-            with open(f, 'r') as fd:
-                self.group_dict = {}
-                curr_group = ''
-                for line in fd:
-                    line_list = line.split(None, 5) # Grab first 5 space delimited strings.
-                    if not line_list: # Disregard empty lines.
-                        continue
-                    elif line_list[0] == 'BO_': # Grab channel group name.
-                        curr_group = line_list[4]
-                    elif line_list[0] == 'SG_': # Grab channel names.
-                        if self.group_dict.get(curr_group) == None: # If channel group not present then add.
-                            self.group_dict[curr_group] = [line_list[1]]
-                        else: # Else append new channel to existing group.
-                            self.group_dict[curr_group].append(line_list[1])
-                fd.close()
-
-            # Make tree widget items from dict.
-            for (key, value) in self.group_dict.items():
-                parent = QtWidgets.QTreeWidgetItem(self.channel_selectors, [key])
-                for ch_name in value:
-                    child = QtWidgets.QTreeWidgetItem(parent)
-                    child.setText(0, ch_name)
-                    # child.setCheckState(0, Qt.Unchecked)
-
-        # Activate the Load MF4 File button only after DBC file is loaded and operated on.
-        self.upload_mdf_file.setEnabled(True)
     
 
     def load_pedal_data(self):
-        # After MDf loaded store brake and gas pedal data in class variables.
-        brake_channel = self.mdf_extracted.get("BrkPres_Front")
-        x = brake_channel.timestamps
-        y = brake_channel.samples
+        # After MDf extracted store brake and gas pedal data in pedal object variables.
+        brake_signal = self.mdf_extracted.get("BrkPres_Front")
+        x = brake_signal.timestamps
+        y = brake_signal.samples
         inter_x = list(range(0, int(x[-1]), 1))
-        self.brake_pressure = np.interp(inter_x, x, y) # Interpolate indices to match play slider values.
+        self.brake_pressure = np.interp(inter_x, x, y) # Interpolate to match play slider values.
 
-        accel_channel = self.mdf_extracted.get("APPS1")
-        x = accel_channel.timestamps
-        y = accel_channel.samples
+        accel_signal = self.mdf_extracted.get("APPS1")
+        x = accel_signal.timestamps
+        y = accel_signal.samples
         inter_x = list(range(0, int(x[-1]), 1))
         self.accel_percent = np.interp(inter_x, x, y)
-        
-
-    # def check_event(self, item, column):
-    #     # If user uncheckes a box then remove from desired channel list.
-    #     if item.checkState(column) == Qt.Unchecked:
-    #         self.channel_list[:] = [ch for ch in self.channel_list if ch != item.text(0)]
-    #     else: # Else checked and add to list.
-    #         self.channel_list.append(item.text(0))
 
 
     def render_graphs(self):
+        # If MDF loaded iterate through tabs and render each plot onto their graphs.
         if self.mdf_extracted != None:
-            tab_count = self.tabs.count()
+            # Delete old tab wigets. Redraw leads to ugly behavior.
+            for i in reversed(range(self.tabs.count())):
+                self.tabs.removeTab(i)
             new_tabs = []
+            # Create new tab widgets, add to new tab list.
             for tab_obj in self.tab_list:
                 newTab = Tab(tab_obj.get_title(), self.play_slider)
-                for plot_name in tab_obj.get_plots():
+                for plot in tab_obj.get_plots():
+                    group = plot[0]
+                    signal = plot[1]
                     try:
-                        mdf_obj = self.mdf_extracted.get(plot_name)
+                        mdf_obj = self.channel_dict[group][signal]
                         if mdf_obj is not None:
-                            newTab.add_plot(plot_name, mdf_obj.timestamps, mdf_obj.samples, mdf_obj.unit)
+                            newTab.add_plot(group, signal, mdf_obj.timestamps, mdf_obj.samples, mdf_obj.unit)
                     except Exception:
-                        newTab.add_plot(plot_name)
+                        newTab.add_plot(group, signal)
                 self.tabs.addTab(newTab.get_tab_widget(), newTab.get_title())
                 new_tabs.append(newTab)
                 newTab.render_multiplot()
 
-            self.redraw_slider()
+            # Replace old tab list with new and redraw features.
             self.tab_list.clear()
             self.tab_list = new_tabs
-            for i in reversed(range(tab_count)):
-                self.tabs.removeTab(i)
-
-        # displayed_tabs = []
-
-        # # Iterate through tabs and if no longer on desired channel list then remove them else add to current tabs list.
-        # for i in reversed(range(self.tabs.count())):
-        #     tab_name = self.tabs.tabText(i)
-        #     if tab_name not in self.channel_list: # If not present then remove tab and it's graph widget.
-        #         self.tabs.removeTab(i) 
-        #         self.tab_list[:] = [x for x in self.tab_list if x.get_title() != tab_name]
-        #     else: # Else add to already displayed_tabs list.
-        #         displayed_tabs.append(tab_name)
-
-        # # If channel doesn't have a tab then create tab with graph.
-        # for ch in self.channel_list:
-        #     if ch not in displayed_tabs:
-        #         ch_obj = self.mdf_extracted.get(ch)
-        #         new_tab = Tab('Test', self.play_slider)
-        #         # new_tab.add_plot(ch, ch_obj.timestamps, ch_obj.samples, ch_obj.unit)
-        #         new_tab.add_plot(ch)
-        #         # new_tab = Tab(ch, ch_obj.timestamps, ch_obj.samples, "seconds", ch_obj.unit, self.play_slider)
-        #         new_tab.render_multiplot()
-        #         self.tab_list.append(new_tab)
-        #         self.tabs.addTab(new_tab.get_tab_widget(), new_tab.get_title())
-
-        # Redraw slider's characteristics to new set of tabs and graphs.
-        # self.redraw_slider()
+            self.redraw_slider()
+            # self.redraw_pedals()
 
 
     def redraw_slider(self):
@@ -342,7 +319,6 @@ class main(QtWidgets.QMainWindow):
 
 
     def redraw_pedals(self):
-        
         i = self.play_slider.value()
 
         # Redraw brake_pedal.
@@ -363,7 +339,6 @@ class main(QtWidgets.QMainWindow):
 
 
     def slider_moved(self):
-        print(self.play_slider.value())
         # Iterate over tab objects and change their display line location to match the slider's value.
         for tab_obj in self.tab_list:
             tab_obj.set_selected_x(self.play_slider.value())
@@ -417,14 +392,72 @@ class main(QtWidgets.QMainWindow):
         self.play_slider.setValue(self.play_slider.value() + 10)
 
 
+    def saveWorkspace(self):
+        # On "Export Workspace" select get essential data from tab_list and save to JSON. 
+        file_name = QtGui.QFileDialog.getSaveFileName(self, "Export Workspace", os.getcwd(), "JSON (*.json)")
+
+        # Saved to dict formatted tab_data[tab title] = {group: [signal, ...], ...}
+        tab_data = {}
+        for tab in self.tab_list:
+            title = tab.get_title()
+            tab_data[title] = {}
+            for plot in tab.get_plots():
+                group = plot[0]
+                signal = plot[1]
+                if group not in tab_data[title]:
+                    tab_data[title][group] = [signal]
+                else:
+                    tab_data[title][group].append(signal)
+        
+        # Write to file.
+        with open(file_name[0], 'w') as fd:
+            fd.write(json.dumps(tab_data, sort_keys=True, indent=4))
+            fd.close()
+
+
+    def LoadWorkspace(self):
+        # On "Import Workspace" load JSON and generate tab objects in tab_list.
+        file_name = QtWidgets.QFileDialog.getOpenFileName(self, 'Import Workspace', os.getcwd(), "JSON (*.json)")
+ 
+        with open(file_name[0]) as fd:
+
+            # Remove any old tabs. Clean slate.
+            for i in reversed(range(self.tabs.count())):
+                self.tabs.removeTab(i)
+            self.tab_list.clear()
+
+            # Generate new tabs.
+            tab_data = json.load(fd)
+            for tab, groups in tab_data.items():
+                new_tab = Tab(tab, self.play_slider)
+                new_tab.add_plots(groups)
+                new_tab.render_multiplot()
+
+                self.tabs.addTab(new_tab.get_tab_widget(), new_tab.get_title())
+                self.tab_list.append(new_tab)
+        
+        # Display data immediately upon upload if MDF already uploaded.
+        self.render_graphs()
+        
+
     def close_tab(self, i):
-        self.tab_list.remove(i)
+        self.tab_list.pop(i)
         self.tabs.removeTab(i)
+        self.redraw_slider()
 
 
-    def update_plots(self):
-        print("COOL!")
+    def close_display(self):
+        self.close_tab(self.tabs.currentIndex())
 
+
+    def edit_display(self):
+        if len(self.tab_list) > 0:
+            tab = self.tab_list[self.tabs.currentIndex()]
+            self.popupTabLayout(prev_state=tab, edit=True)
+
+
+    def test(self):
+        print("You made it!")
 
 if __name__ == "__main__":
     app = QtWidgets.QApplication(sys.argv)
