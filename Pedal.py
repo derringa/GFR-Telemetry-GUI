@@ -3,9 +3,10 @@
 # Description:      Pedal class generates a gas or brake pedal graphic whose angle or compression
 #                   changes by the value passed to it compared to the user defined max.
 
+
 import numpy
 from PyQt5 import QtWidgets, QtCore, QtGui
-from PyQt5.Qt import Qt
+
 
 class Pedal(QtWidgets.QWidget):
     
@@ -36,7 +37,7 @@ class Pedal(QtWidgets.QWidget):
     def draw_pedal(self, canvas):
       
         size = self.size()
-        pen = QtGui.QPen(self.set_pen_color(), 5, Qt.SolidLine)
+        pen = QtGui.QPen(self.set_pen_color(), 5, QtCore.Qt.SolidLine)
         canvas.setPen(pen)
 
         origin_x = 5
@@ -65,7 +66,7 @@ class Pedal(QtWidgets.QWidget):
 
     def draw_border(self, canvas):
         size = self.size()
-        pen = QtGui.QPen(QtGui.QColor(0, 0, 0), 5, Qt.SolidLine)
+        pen = QtGui.QPen(QtGui.QColor(0, 0, 0), 5, QtCore.Qt.SolidLine)
         canvas.setPen(pen)
 
         canvas.drawLine(0, 0, 0, size.height())

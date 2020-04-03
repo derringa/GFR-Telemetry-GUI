@@ -16,11 +16,11 @@ import threading
 import json
 
 from Tab import Tab
+from SteeringWheel import SteeringWheel
 from Pedal import Pedal
 from Worker import Worker
 from LayoutPopup import LayoutPopup
 from ImportPopup import ImportPopup
-from CustomTree import CustomTree
 
 
 class main(QtWidgets.QMainWindow):
@@ -33,6 +33,7 @@ class main(QtWidgets.QMainWindow):
         self.mdf_extracted = None
         self.play_status = False # Play-button status to toggle between play and pause.
 
+        self.workspace_file = ""
         self.dbc_path = ""
         self.mdf_path = ""
 
@@ -87,6 +88,8 @@ class main(QtWidgets.QMainWindow):
         import_data.triggered.connect(self.popupFileImport)
         file_menu.addAction(import_data)
 
+        file_menu.addSeparator()
+
         # File drop down option - Load Workspace.
         load_workspace = QtGui.QAction("&Load Workspace", self)
         load_workspace.setShortcut("Ctrl+W")
@@ -100,6 +103,8 @@ class main(QtWidgets.QMainWindow):
         save_workspace.setStatusTip("Save tab and graph setting for later use.")
         save_workspace.triggered.connect(self.saveWorkspace)
         file_menu.addAction(save_workspace)
+
+        file_menu.addSeparator()
 
         # File drop down option - exit.
         exit_gui = QtGui.QAction("&Exit", self)
@@ -211,6 +216,11 @@ class main(QtWidgets.QMainWindow):
         self.play_slider.valueChanged.connect(self.slider_moved)
         self.right_vert_sec.addWidget(self.play_slider)
 
+        # Graphic - Steering Wheel
+        self.steering_wheel = SteeringWheel(0)
+        self.right_vert_sec.addWidget(self.steering_wheel)
+        self.steering_wheel.setMaximumSize(200,200)
+
         # Horizontal Pedals layout - Brake and Gas
         self.pedal_horz_sec = QtWidgets.QHBoxLayout()
         self.right_vert_sec.addLayout(self.pedal_horz_sec)
@@ -262,21 +272,34 @@ class main(QtWidgets.QMainWindow):
         # Render any graphs already present and grab data for pedals.
         self.render_graphs()
         self.load_pedal_data()
+        self.load_steering_wheel()
     
 
     def load_pedal_data(self):
+        # inter_x = [x * 0.1 for x in range(0, int(x[-1]))]
         # After MDf extracted store brake and gas pedal data in pedal object variables.
         brake_signal = self.mdf_extracted.get("BrkPres_Front")
         x = brake_signal.timestamps
         y = brake_signal.samples
-        inter_x = list(range(0, int(x[-1]), 1))
+        # inter_x = list(range(0, int(x[-1]), 0.1))
+        inter_x = [x * 0.1 for x in range(0, int(x[-1]) * 10)]
         self.brake_pressure = np.interp(inter_x, x, y) # Interpolate to match play slider values.
 
         accel_signal = self.mdf_extracted.get("APPS1")
         x = accel_signal.timestamps
         y = accel_signal.samples
-        inter_x = list(range(0, int(x[-1]), 1))
-        self.accel_percent = np.interp(inter_x, x, y)
+        # inter_x = list(range(0, int(x[-1]), 0.1))
+        inter_x = [x * 0.1 for x in range(0, int(x[-1]) * 10)]
+        self.accel_pressure = np.interp(inter_x, x, y)
+
+
+    def load_steering_wheel(self):
+        sta = self.mdf_extracted.get("STA")
+        x = sta.timestamps
+        y = sta.samples
+        # inter_x = list(range(0, int(x[-1]), 0.1))
+        inter_x = [x * 0.1 for x in range(0, int(x[-1]) * 10)]
+        self.sta = np.interp(inter_x, x, y)
 
 
     def render_graphs(self):
@@ -306,7 +329,6 @@ class main(QtWidgets.QMainWindow):
             self.tab_list.clear()
             self.tab_list = new_tabs
             self.redraw_slider()
-            # self.redraw_pedals()
 
 
     def redraw_slider(self):
@@ -315,10 +337,10 @@ class main(QtWidgets.QMainWindow):
         for tab_obj in self.tab_list:
             if tab_obj.get_max_timestamp() > max_timestamp:
                 max_timestamp = tab_obj.get_max_timestamp()
-        self.play_slider.setRange(0, max_timestamp) # Redraw slider.
+        self.play_slider.setRange(0, max_timestamp * 10) # Redraw slider.
 
 
-    def redraw_pedals(self):
+    def redraw_graphics(self):
         i = self.play_slider.value()
 
         # Redraw brake_pedal.
@@ -330,21 +352,28 @@ class main(QtWidgets.QMainWindow):
         self.brake_pedal.set_pressure(pressure) # Redraw.
 
         # The same process applied to gas_pedal.
-        if i >= len(self.accel_percent):
-            i = len(self.accel_percent) - 1
-        pressure = int(self.accel_percent[i]) - 200
+        if i >= len(self.accel_pressure):
+            i = len(self.accel_pressure) - 1
+        pressure = int(self.accel_pressure[i]) - 200
         if pressure > self.gas_pedal.get_max():
             pressure = self.gas_pedal.get_max()
         self.gas_pedal.set_pressure(pressure)
 
+        # The same process applied to steering_wheel.
+        if i >= len(self.sta):
+            i = len(self.sta) - 1
+        self.steering_wheel.setSTA(self.sta[i])
+
 
     def slider_moved(self):
         # Iterate over tab objects and change their display line location to match the slider's value.
+        print(self.play_slider.value())
         for tab_obj in self.tab_list:
-            tab_obj.set_selected_x(self.play_slider.value())
+            new_x = self.play_slider.value() / 10
+            tab_obj.set_selected_x(new_x)
 
         # Redraw pedals to match new slider timestamp.
-        self.redraw_pedals()
+        self.redraw_graphics()
         
 
     def generate_play_thread(self):
@@ -394,7 +423,7 @@ class main(QtWidgets.QMainWindow):
 
     def saveWorkspace(self):
         # On "Export Workspace" select get essential data from tab_list and save to JSON. 
-        file_name = QtGui.QFileDialog.getSaveFileName(self, "Export Workspace", os.getcwd(), "JSON (*.json)")
+        file_path = QtGui.QFileDialog.getSaveFileName(self, "Export Workspace", os.getcwd() + "/" + self.workspace_file, "JSON (*.json)")
 
         # Saved to dict formatted tab_data[tab title] = {group: [signal, ...], ...}
         tab_data = {}
@@ -410,31 +439,40 @@ class main(QtWidgets.QMainWindow):
                     tab_data[title][group].append(signal)
         
         # Write to file.
-        with open(file_name[0], 'w') as fd:
-            fd.write(json.dumps(tab_data, sort_keys=True, indent=4))
-            fd.close()
+        try:
+            with open(file_path[0], 'w') as fd:
+                fd.write(json.dumps(tab_data, sort_keys=True, indent=4))
+                fd.close()
+            self.workspace_file = os.path.split(file_path[0])[1]
+            print(self.workspace_file)
+        except Exception:
+            pass
 
 
     def LoadWorkspace(self):
         # On "Import Workspace" load JSON and generate tab objects in tab_list.
-        file_name = QtWidgets.QFileDialog.getOpenFileName(self, 'Import Workspace', os.getcwd(), "JSON (*.json)")
+        file_path = QtWidgets.QFileDialog.getOpenFileName(self, 'Import Workspace', os.getcwd() + "/" + self.workspace_file, "JSON (*.json)")
  
-        with open(file_name[0]) as fd:
+        try:
+            with open(file_path[0]) as fd:
 
-            # Remove any old tabs. Clean slate.
-            for i in reversed(range(self.tabs.count())):
-                self.tabs.removeTab(i)
-            self.tab_list.clear()
+                # Remove any old tabs. Clean slate.
+                for i in reversed(range(self.tabs.count())):
+                    self.tabs.removeTab(i)
+                self.tab_list.clear()
 
-            # Generate new tabs.
-            tab_data = json.load(fd)
-            for tab, groups in tab_data.items():
-                new_tab = Tab(tab, self.play_slider)
-                new_tab.add_plots(groups)
-                new_tab.render_multiplot()
+                # Generate new tabs.
+                tab_data = json.load(fd)
+                for tab, groups in tab_data.items():
+                    new_tab = Tab(tab, self.play_slider)
+                    new_tab.add_plots(groups)
+                    new_tab.render_multiplot()
 
-                self.tabs.addTab(new_tab.get_tab_widget(), new_tab.get_title())
-                self.tab_list.append(new_tab)
+                    self.tabs.addTab(new_tab.get_tab_widget(), new_tab.get_title())
+                    self.tab_list.append(new_tab)
+            self.workspace_file = os.path.split(file_path[0])[1]
+        except Exception:
+            pass
         
         # Display data immediately upon upload if MDF already uploaded.
         self.render_graphs()
@@ -455,9 +493,6 @@ class main(QtWidgets.QMainWindow):
             tab = self.tab_list[self.tabs.currentIndex()]
             self.popupTabLayout(prev_state=tab, edit=True)
 
-
-    def test(self):
-        print("You made it!")
 
 if __name__ == "__main__":
     app = QtWidgets.QApplication(sys.argv)

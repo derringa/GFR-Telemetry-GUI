@@ -18,7 +18,7 @@ class Worker(QtCore.QThread):
         # While thread is asked to be active by parent emit int value 1 every second.
         while self._active == True:
             self.intReady.emit(1)
-            time.sleep(1)
+            time.sleep(0.1)
 
 
     def kill(self):

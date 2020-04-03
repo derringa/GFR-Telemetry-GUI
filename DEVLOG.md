@@ -93,3 +93,9 @@
 * Popup window for mdf and dbc file select generated. Validated and passed to main window.
 ### Toolbar ###
 * Import data and managing tabs moved primarily to toolbar dropdown selections. Buttons removed.
+
+## 4/2/2020 ##
+### Toolbar ###
+* Reformatting.
+### Save/Load Workspace ###
+* File select window maintains loaded workspace file name.
